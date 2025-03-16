@@ -66,7 +66,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void AnimateMovement(Vector2 moveInput){
         if(moveInput != Vector2.zero){
-            Debug.Log(moveInput.x);
             animator.SetFloat(animPar.HorizontalParam, moveInput.x);
             animator.SetFloat(animPar.VerticalParam, moveInput.y);
         }
