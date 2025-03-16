@@ -4,14 +4,14 @@ using UnityEngine;
 public class GameParameters : ScriptableObject
 {
     #region Field
-    [SerializeField] private float playerSpeed = 5;
+    [SerializeField] private float player_BaseSpeed = 5;
     #endregion
 
 
 
     #region Properties
-    public float PlayerSpeed{
-        get { return playerSpeed; }
+    public float Player_BaseSpeed{
+        get { return player_BaseSpeed; }
     }
 
     #endregion 
