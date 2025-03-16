@@ -3,15 +3,19 @@ using UnityEngine.Rendering;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float speed = 5;
-    public Rigidbody2D rigidBody; 
+
+    [SerializeField] 
+    private Rigidbody2D rigidBody; 
+
+    [SerializeField] 
+    private GameParameters gameParameters;
  
-    // Update is called once per frame
-    void Update()
+    // Update is called 50 times per second (not once per frame like Update)
+    void FixedUpdate()
     {
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
 
-        rigidBody.linearVelocity = new Vector2(horizontal, vertical);
+        rigidBody.linearVelocity = new Vector2(horizontal, vertical) * gameParameters.PlayerSpeed;
     }
 }
