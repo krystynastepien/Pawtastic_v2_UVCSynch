@@ -1,10 +1,11 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "GameParameters", menuName ="ScriptableObjects/GameParameters", order = 0)]
-public class GameParameters : ScriptableObject
+public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance {get; private set;}  // singleton - globally accesible class with only 1 instance
+
     #region PlayerStats
-        #region Field
+        #region Fields
         [SerializeField] private float player_BaseSpeed = 5;
         [SerializeField] private string tag_player = "Player";
         #endregion
@@ -16,8 +17,16 @@ public class GameParameters : ScriptableObject
         public string Tag_player{
             get { return tag_player; }
         }
-
         #endregion 
     #endregion 
 
+
+    // create instance on Awake
+    private void Awake(){
+
+        if(Instance != null && Instance != this)
+            Destroy(this);
+        else
+            Instance = this;
+    }
 }

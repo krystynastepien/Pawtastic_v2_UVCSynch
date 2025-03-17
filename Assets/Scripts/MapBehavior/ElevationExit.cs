@@ -2,14 +2,13 @@ using UnityEngine;
 
 public class ElevationExit : MonoBehaviour
 {
-    [SerializeField] private GameParameters gameParameters;
     [SerializeField] Collider2D[] mountainColliders;
     [SerializeField] Collider2D[] boundryColliders;
 
 
     private void OnTriggerEnter2D(Collider2D collision) // this collision will store players collider when they trigger the collision
     {
-        if(collision.gameObject.tag == gameParameters.Tag_player){
+        if(collision.gameObject.tag == GameManager.Instance.Tag_player){
             foreach (Collider2D mountain in mountainColliders)
             {
                 mountain.enabled = true; // when we enter the mountain we turn off tilemap colliders

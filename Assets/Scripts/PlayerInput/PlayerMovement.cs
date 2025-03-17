@@ -7,8 +7,6 @@ public class PlayerMovement : MonoBehaviour
 {
     // game const settings
     #region const 
-    [SerializeField] private AnimationParameters animPar;
-    [SerializeField] private GameParameters gameParameters;
     private float playerSpeed;
     #endregion
 
@@ -27,7 +25,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        playerSpeed = gameParameters.Player_BaseSpeed;
+        playerSpeed = GameManager.Instance.Player_BaseSpeed;
         isMoving = false;
     }
 
@@ -47,7 +45,7 @@ public class PlayerMovement : MonoBehaviour
         
 
         // animation walk <-> idle update
-        animator.SetBool(animPar.IsMovingParam, isMoving);
+        animator.SetBool(AnimationManager.Instance.IsMovingParam, isMoving);
     }
 
     #region Player Actions
@@ -66,8 +64,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void AnimateMovement(Vector2 moveInput){
         if(moveInput != Vector2.zero){
-            animator.SetFloat(animPar.HorizontalParam, moveInput.x);
-            animator.SetFloat(animPar.VerticalParam, moveInput.y);
+            animator.SetFloat(AnimationManager.Instance.HorizontalParam, moveInput.x);
+            animator.SetFloat(AnimationManager.Instance.VerticalParam, moveInput.y);
         }
     }
         
