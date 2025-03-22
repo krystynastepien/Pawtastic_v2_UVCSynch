@@ -15,7 +15,21 @@ public class PlayerActions : MonoBehaviour
         
 
     private Rigidbody2D _rigidBody; 
-    [SerializeField]public Vector2 MoveInput {get; private set;}
+    
+    private Vector2 _moveInput;
+
+    public Vector2 MoveInput   
+    {
+        get { 
+            _moveInput.Normalize();
+             return _moveInput; 
+        }   
+        private set { 
+            _moveInput = value; 
+        }  
+    }
+
+    //public Vector2 MoveInput {get; private set;}
 
     public void OnStart()
     {
@@ -41,6 +55,7 @@ public class PlayerActions : MonoBehaviour
     public void GetMoveInput(InputAction.CallbackContext context) 
     {
         MoveInput = context.ReadValue<Vector2>();
+
     }
 
     #endregion
@@ -58,17 +73,6 @@ public class PlayerActions : MonoBehaviour
     /// <returns></returns>
     private void OnMove(){
         _rigidBody.linearVelocity = MoveInput * playerSpeed; 
-    }
-
-    /// <summary>
-    /// Returns true if the movement engine detects move input different from 0
-    /// </summary>
-    /// <returns></returns>
-    private bool IsPlayerMoving(){
-        if(MoveInput != Vector2.zero)
-            return true;
-        else
-            return false;
     }
         
     #endregion
