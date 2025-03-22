@@ -25,7 +25,7 @@ public class AnimationManager : MonoBehaviour
 
 
     // create instance on Awake
-    private void Awake(){
+    public void OnAwake(){
 
         if(Instance != null && Instance != this)
             Destroy(this);
