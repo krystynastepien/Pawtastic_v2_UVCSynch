@@ -6,6 +6,8 @@ public class PlayerController : MonoBehaviour
     private GameObject _player;
     private PlayerActions _playerActions;
 
+    private PlayerMovementStateManager _mngrMovementState;
+
     /// <summary>
     /// create instance on Awake
     /// </summary>
@@ -27,11 +29,20 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// execute on Fixedupdate in GameFlow
+    /// execute on Updatepdate in GameFlow
     /// </summary>
-    public void OnUpdate()
+    public void OnFrameUpdate()
     {
-        _playerActions.OnUpdate();
+        //_playerActions.OnFrameUpdate();
+        _mngrMovementState.OnFrameUpdate();
+    }
+
+    /// <summary>
+    /// execute on FixedUpdate in GameFlow
+    /// </summary>
+    public void OnFixedUpdate()
+    {
+        _playerActions.OnFixedUpdate();
     }
 
 
@@ -43,6 +54,7 @@ public class PlayerController : MonoBehaviour
     private void CreatePlayer(){
         InitPlayer();
         InitPlayerComponents();
+        _mngrMovementState.OnStart();
     }
 
     /// <summary>
@@ -67,6 +79,8 @@ public class PlayerController : MonoBehaviour
 
         // get components
         _playerActions = _player.GetComponent<PlayerActions>();
+        _mngrMovementState = _player.GetComponent<PlayerMovementStateManager>();
+        _mngrMovementState.OnAwake();
         // player health, statts and so on
     }     
     #endregion

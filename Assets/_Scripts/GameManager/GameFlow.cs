@@ -32,9 +32,14 @@ public class GameFlow : MonoBehaviour
         _playerMngr.OnStart();
     }
 
-    void FixedUpdate()    // Update is called 50 times per second (not once per frame like Update)
+    void FixedUpdate()    // Update is called 50 times per second (not once per frame like Update) - for physics
     {
-        _playerMngr.OnUpdate();
+        _playerMngr.OnFixedUpdate();
+    }
+
+    void Update()    // Update is called once per frame - for animation
+    {
+        _playerMngr.OnFrameUpdate();
     }
 
 
