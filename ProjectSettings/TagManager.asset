@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Damage
   - Water
+  - HUD
   layers:
   - Default
   - TransparentFX
