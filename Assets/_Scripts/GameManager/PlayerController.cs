@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     private PlayerActions _playerActions;
 
     private PlayerMovementStateManager _mngrMovementState;
+    public PlayerStats PlayerStats;
 
     /// <summary>
     /// create instance on Awake
@@ -49,12 +50,11 @@ public class PlayerController : MonoBehaviour
     #region Init
 
     /// <summary>
-    /// Create the Player
+    /// Create the Player - passed to Start
     /// </summary>
     private void CreatePlayer(){
         InitPlayer();
         InitPlayerComponents();
-        _mngrMovementState.OnStart();
     }
 
     /// <summary>
@@ -80,8 +80,11 @@ public class PlayerController : MonoBehaviour
         // get components
         _playerActions = _player.GetComponent<PlayerActions>();
         _mngrMovementState = _player.GetComponent<PlayerMovementStateManager>();
-        _mngrMovementState.OnAwake();
-        // player health, statts and so on
+        PlayerStats = _player.GetComponent<PlayerStats>();
+
+        _mngrMovementState.OnStart();
+        PlayerStats.OnStart();
+        //_playerStats = new PlayerStats(maxHealth: 10, attack: 5, defense: 2);        
     }     
     #endregion
     

@@ -8,7 +8,7 @@ public class PlayerActions : MonoBehaviour
 {
     // game const settings
     #region const 
-    private float playerSpeed;
+    //private float playerSpeed;
     #endregion
 
     private PlayerMovementStateManager stateMovementMgr;
@@ -30,11 +30,10 @@ public class PlayerActions : MonoBehaviour
     }
 
     //public Vector2 MoveInput {get; private set;}
-
     public void OnStart()
     {
         _rigidBody = GetComponent<Rigidbody2D>();
-        playerSpeed = GameManager.Instance.Player_BaseSpeed;
+        //playerSpeed = GameManager.Instance.Player_BaseSpeed;
     }
 
     /// <summary>
@@ -72,7 +71,7 @@ public class PlayerActions : MonoBehaviour
     /// </summary>
     /// <returns></returns>
     private void OnMove(){
-        _rigidBody.linearVelocity = MoveInput * playerSpeed; 
+        _rigidBody.linearVelocity = MoveInput * PlayerController.Instance.PlayerStats.Speed; 
     }
         
     #endregion

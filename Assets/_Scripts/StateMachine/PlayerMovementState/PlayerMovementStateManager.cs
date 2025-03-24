@@ -10,19 +10,17 @@ public class PlayerMovementStateManager : MonoBehaviour
     public PlayerIdleState IdleState {get; private set;}
 
 
-    public void OnAwake(){
+    public void OnStart(){
         //Player = GameObject.FindWithTag(GameManager.Instance.Tag_player); 
         PlayerActions = this.gameObject.GetComponent<PlayerActions>();
         Animator = GetComponent<Animator>();
         RunningState = new PlayerRunningState();
         IdleState = new PlayerIdleState();
-    }
 
-    public void OnStart()
-    {
         CurrentState = IdleState;     
         CurrentState.EnterState(this); 
     }
+
 
     public void OnFrameUpdate()
     {

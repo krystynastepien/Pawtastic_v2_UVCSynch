@@ -6,18 +6,18 @@ public class GameManager : MonoBehaviour
 
     #region PlayerStats
     #region Fields
-    [SerializeField] private float player_BaseSpeed = 5;
     [SerializeField] private string tag_player = "Player";
+    [SerializeField] private string tag_water = "Water"; // water 
     #endregion
 
     #region Properties
-    public float Player_BaseSpeed
-    {
-        get { return player_BaseSpeed; }
-    }
     public string Tag_player
     {
         get { return tag_player; }
+    }
+    public string Tag_water
+    {
+        get { return tag_water; }
     }
     #endregion
     #endregion
