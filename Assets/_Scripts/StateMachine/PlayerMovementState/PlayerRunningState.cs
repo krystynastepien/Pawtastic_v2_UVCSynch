@@ -3,7 +3,7 @@ using UnityEngine;
 public class PlayerRunningState : PlayerMovementBaseState
 {
     public override void EnterState(PlayerMovementStateManager mgr){
-        Debug.Log("player entered Running state");
+        //Debug.Log("player entered Running state");
         mgr.Animator.SetBool(AnimationManager.Instance.IsMovingParam, true);
     }
 

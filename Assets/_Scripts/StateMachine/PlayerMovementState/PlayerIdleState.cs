@@ -3,7 +3,7 @@ using UnityEngine;
 public class PlayerIdleState : PlayerMovementBaseState
 {
     public override void EnterState(PlayerMovementStateManager mgr){
-        Debug.Log("player entered Idle state");
+        //Debug.Log("player entered Idle state");
         mgr.Animator.SetBool(AnimationManager.Instance.IsMovingParam, false);
     }
 

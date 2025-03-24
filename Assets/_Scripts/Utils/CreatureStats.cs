@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Timeline;
@@ -58,6 +59,24 @@ public abstract class CreatureStats : MonoBehaviour, IDamageable
     #region Modifiers
 
     public abstract void TakeDamage(int damageVal);
+    public abstract void TakeDamageOverGivenTime(float time, int damageVal);
+    public abstract void TakeDamageForSeconds(float seconds, int damageVal);
+    public abstract void StopActiveDamageCoroutine();
+
+
+    /// <summary>
+    /// Substracts given damage from object's current health over time
+    /// </summary>
+    /// <param name="damageVal"></param>
+    public abstract IEnumerator DamageOverGivenTimeCoroutine(float duration, int damageValMax);
+
+    /// <summary>
+    /// Substracts given damage from object's current health every x seconds
+    /// </summary>
+    /// <param name="damageVal"></param>
+    public abstract IEnumerator DamageForSecondsCoroutine(float duration, int damageValMax);
+
+
    
     /// <summary>
     /// returns characters health after taking damage
