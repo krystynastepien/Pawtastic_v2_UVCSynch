@@ -16,7 +16,7 @@ public abstract class CreatureStats : MonoBehaviour, IDamageable
     #endregion
 
     #region Fake Ctor
-    public void Init(int maxHealth, int attack, int defense, int speed)
+    public void BaseInit(int maxHealth, int attack, int defense, int speed)
     {
         this.maxHealth = maxHealth;
         this.currentHealth = maxHealth;

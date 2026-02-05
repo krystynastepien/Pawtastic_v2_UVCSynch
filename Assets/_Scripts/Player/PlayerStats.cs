@@ -4,6 +4,21 @@ using UnityEngine;
 
 public class PlayerStats : CreatureStats
 {
+    [SerializeField] private const int MAX_LIVES = 9;
+
+    /// <summary>
+    /// player has 9 lives total - within each x health bars (current life)
+    /// </summary>
+    [SerializeField] private int _playerMaxLives;
+    [SerializeField] private int _playerCurrentLives;
+
+
+    /// <summary>
+    /// character dies when lives go down to 0
+    /// </summary>
+    public int MaxLives { get => _playerMaxLives; set => _playerMaxLives = value; }
+    public int CurrentLives { get => _playerCurrentLives; set => _playerCurrentLives = value; }
+
     /// <summary>
     /// only one coroutine damage
     /// </summary>
@@ -12,7 +27,9 @@ public class PlayerStats : CreatureStats
 
     public void OnStart()
     {
-        Init(maxHealth: 10, attack: 5, defense: 2, speed: 5);
+        BaseInit(maxHealth: 10, attack: 5, defense: 2, speed: 5);
+        MaxLives = MAX_LIVES;
+        CurrentLives = MAX_LIVES;
     }
 
     /// <summary>
@@ -25,9 +42,18 @@ public class PlayerStats : CreatureStats
     public override void TakeDamage(int damageVal)
     {
         CurrentHealth = CurrentHealth - damageVal;
-        if(CurrentHealth <= 0){ // character dies
-            gameObject.SetActive(false);
-            Debug.Log("PLAYER DIED");
+
+        if(CurrentHealth <= 0){ 
+            if(CurrentLives == 1)
+            {
+                gameObject.SetActive(false);
+                Debug.Log("PLAYER DIED");
+            }
+            else
+            {
+                CurrentLives = CurrentLives - 1;
+                CurrentHealth = MaxHealth;
+            }
         }
     }
 
