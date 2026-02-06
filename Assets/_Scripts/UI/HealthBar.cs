@@ -9,10 +9,10 @@ public class HealthBaController : MonoBehaviour
     [SerializeField] private Image _lastBarImg;
 
 
-    private int _maxHealth = PlayerController.Instance.PlayerStats.MaxHealth; 
-    private int _currentHealth = PlayerController.Instance.PlayerStats.CurrentHealth; 
-    private int _maxLives = PlayerController.Instance.PlayerStats.MaxLives; 
-    private int _currentLives = PlayerController.Instance.PlayerStats.CurrentLives; 
+    private int _maxHealth = PlayerManager.Instance._playerHealth.MaxHealth; 
+    private int _currentHealth = PlayerManager.Instance._playerHealth.CurrentHealth; 
+    private int _maxLives = PlayerManager.Instance._playerHealth.MaxLives; 
+    private int _currentLives = PlayerManager.Instance._playerHealth.CurrentLives; 
 
 
 

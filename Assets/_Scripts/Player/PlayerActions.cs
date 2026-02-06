@@ -59,11 +59,6 @@ public class PlayerActions : MonoBehaviour
 
     #endregion
 
-    #region Player Animations
-
-   
-    #endregion
-
     #region Helpers
 
     /// <summary>
@@ -71,7 +66,7 @@ public class PlayerActions : MonoBehaviour
     /// </summary>
     /// <returns></returns>
     private void OnMove(){
-        _rigidBody.linearVelocity = MoveInput * PlayerController.Instance.PlayerStats.Speed; 
+        _rigidBody.linearVelocity = MoveInput * PlayerManager.Instance._playerHealth.Speed; 
     }
         
     #endregion

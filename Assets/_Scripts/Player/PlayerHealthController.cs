@@ -2,91 +2,112 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class PlayerStats : CreatureStats
+public class PlayerHealthController : CreatureStats
 {
-    [SerializeField] private const int MAX_LIVES = 9;
+ #region Constants
+    private const int MAX_LIVES = 9;
+    #endregion
 
-    /// <summary>
-    /// player has 9 lives total - within each x health bars (current life)
-    /// </summary>
+    #region Serialized Fields
     [SerializeField] private int _playerMaxLives;
     [SerializeField] private int _playerCurrentLives;
+    #endregion
 
-
+    #region Properties
     /// <summary>
-    /// character dies when lives go down to 0
+    /// Maximum number of lives the player can have
     /// </summary>
     public int MaxLives { get => _playerMaxLives; set => _playerMaxLives = value; }
-    public int CurrentLives { get => _playerCurrentLives; set => _playerCurrentLives = value; }
-
+    
     /// <summary>
-    /// only one coroutine damage
+    /// Current number of lives remaining. Character dies when this reaches 0.
+    /// </summary>
+    public int CurrentLives { get => _playerCurrentLives; set => _playerCurrentLives = value; }
+    #endregion
+
+    #region Fields
+    /// <summary>
+    /// Tracks active damage coroutine to prevent multiple simultaneous damage effects
     /// </summary>
     private Coroutine _damageCoroutine;
+    #endregion
 
-
+    #region Initialization
     public void OnStart()
     {
-        BaseInit(maxHealth: 10, attack: 5, defense: 2, speed: 5);
+        BaseInit(maxHealth: 5, attack: 5, defense: 2, speed: 5);
         MaxLives = MAX_LIVES;
         CurrentLives = MAX_LIVES;
     }
+    #endregion
 
+    #region Lifecycle Methods
     /// <summary>
-    /// execute on Fixedupdate in GameFlow
+    /// execute on FixedUpdate in GameFlow
     /// </summary>
     public void OnUpdate()
     {
     }
+    #endregion
 
+    #region Damage Methods
     public override void TakeDamage(int damageVal)
     {
-        CurrentHealth = CurrentHealth - damageVal;
+        CurrentHealth -= damageVal;
 
-        if(CurrentHealth <= 0){ 
+        if(CurrentHealth <= 0)
+        { 
             if(CurrentLives == 1)
             {
                 gameObject.SetActive(false);
-                Debug.Log("PLAYER DIED");
+                GameLogger.Log("PLAYER died", LoggerConfig.LogCategoryFlags.Player,this);
             }
             else
             {
-                CurrentLives = CurrentLives - 1;
+                CurrentLives--; // CurrentLives = CurrentLives - 1
                 CurrentHealth = MaxHealth;
             }
         }
     }
 
-    public override void TakeDamageOverGivenTime(float time, int damageVal){
+    public override void TakeDamageOverGivenTime(float time, int damageVal)
+    {
         if(_damageCoroutine == null)
             _damageCoroutine = StartCoroutine(DamageOverGivenTimeCoroutine(time, damageVal));
-        else{
+        else
+        {
             StopActiveDamageCoroutine();
             _damageCoroutine = StartCoroutine(DamageOverGivenTimeCoroutine(time, damageVal));
         }    
     }
 
-
     /// <summary>
-    /// Substracts given damage from object's current health over time
+    /// Subtracts given damage from object's current health over time
     /// </summary>
-    /// <param name="damageVal"></param>
-    public override void TakeDamageForSeconds(float seconds, int damageVal){
+    public override void TakeDamageForSeconds(float seconds, int damageVal)
+    {
         Debug.Log("_damageCoroutine: " + _damageCoroutine);
         if(_damageCoroutine == null)
             _damageCoroutine = StartCoroutine(DamageForSecondsCoroutine(seconds, damageVal));
-        else{
+        else
+        {
             StopActiveDamageCoroutine();
             _damageCoroutine = StartCoroutine(DamageForSecondsCoroutine(seconds, damageVal));
         }
     }
 
+    public override void StopActiveDamageCoroutine()
+    {
+        if(_damageCoroutine != null)
+            StopCoroutine(_damageCoroutine);
+    }
+    #endregion
 
+    #region Coroutines
     /// <summary>
-    /// Substracts given damage from object's current health over time
+    /// Applies damage over a given duration (total damageValMax spread across duration)
     /// </summary>
-    /// <param name="damageVal"></param>
-    public override IEnumerator DamageOverGivenTimeCoroutine(float duration, int damageValMax) // damageValMax over duration 10sec = damage per loop should be 2
+    public override IEnumerator DamageOverGivenTimeCoroutine(float duration, int damageValMax)
     {
         float amountDamaged = 0;
         int damagePerLoop = (int)Math.Round(damageValMax / duration);
@@ -96,29 +117,23 @@ public class PlayerStats : CreatureStats
         while (amountDamaged < damageValMax)
         {
             TakeDamage(damagePerLoop);
-            amountDamaged = amountDamaged + damagePerLoop;
+            amountDamaged += damagePerLoop;
             yield return new WaitForSeconds(1f);
         }
     }
 
     /// <summary>
-    /// Substracts given damage from object's current health every x seconds
+    /// Applies damage repeatedly every X seconds until health reaches 0
     /// </summary>
-    /// <param name="damageVal"></param>
-    public override IEnumerator DamageForSecondsCoroutine(float seconds, int damageVal) // damageValMax over duration 10sec = damage per loop should be 2
+    public override IEnumerator DamageForSecondsCoroutine(float seconds, int damageVal)
     {
-        while(CurrentHealth > 0){
+        while(CurrentHealth > 0)
+        {
             Debug.Log("inside DamageForSecondsCoroutine, seconds: " + seconds + ", damage: " + damageVal);
-            //TODO force int instead of float?
             seconds = (int)Math.Round(seconds);
             TakeDamage(damageVal);
             yield return new WaitForSeconds(seconds);
         }
     }
-
-    public override void StopActiveDamageCoroutine(){
-        if(_damageCoroutine != null)
-            StopCoroutine(_damageCoroutine);
-    }
-
+    #endregion
 }

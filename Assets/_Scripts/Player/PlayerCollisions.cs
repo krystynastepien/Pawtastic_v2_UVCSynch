@@ -24,26 +24,26 @@ public class PlayerCollisions : MonoBehaviour
     void ProcessCollision(GameObject collider){
         
         //switch for different tags
-        if (collider.CompareTag(GameManager.Instance.Tag_water))
+        if (collider.CompareTag(Tags.Water))
         {
-            PlayerController.Instance.PlayerStats.TakeDamage(damageVal: 2);
+            PlayerManager.Instance._playerHealth.TakeDamage(damageVal: 2);
         }
     }
 
     void ProcessCollisionOverTime(GameObject collider){ 
         //switch for different tags
-        if (collider.CompareTag(GameManager.Instance.Tag_water))
+        if (collider.CompareTag(Tags.Water))
         {
-            PlayerController.Instance.PlayerStats.TakeDamageForSeconds(seconds: 1, damageVal: 1);
+            PlayerManager.Instance._playerHealth.TakeDamageForSeconds(seconds: 1, damageVal: 1);
         }
     }
 
     void StopCollisionOverTime(GameObject collider){
         
         //switch for different tags
-        if (collider.CompareTag(GameManager.Instance.Tag_water))
+        if (collider.CompareTag(Tags.Water))
         {
-            PlayerController.Instance.PlayerStats.StopActiveDamageCoroutine();
+            PlayerManager.Instance._playerHealth.StopActiveDamageCoroutine();
         }
     }
     #endregion

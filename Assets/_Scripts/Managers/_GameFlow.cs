@@ -1,25 +1,19 @@
 using UnityEngine;
 
 [RequireComponent(typeof(GameManager))]
-[RequireComponent(typeof(PlayerController))]
+[RequireComponent(typeof(PlayerManager))]
 [RequireComponent(typeof(AnimationManager))]
 public class GameFlow : MonoBehaviour
 {
-    public static GameFlow Instance { get; private set; }  // singleton - globally accesible class with only 1 instance   
+    //public static GameFlow Instance { get; private set; }  // singleton - globally accesible class with only 1 instance   
     [SerializeField] private GameManager _gameMngr;
-    [SerializeField] private PlayerController _playerMngr;
+    [SerializeField] private PlayerManager _playerMngr;
     [SerializeField] private AnimationManager _animationMngr;
 
     private void Awake()
     {
-        // initialize this singleton
-        if (Instance != null && Instance != this)
-            Destroy(this);
-        else
-            Instance = this;
-
         // get all manager objects
-        InitManagerObjects();
+        GetManagerComponents();
 
         // initialize all other singletons    
         _gameMngr.OnAwake();
@@ -46,9 +40,9 @@ public class GameFlow : MonoBehaviour
     /// <summary>
     /// initialize all manager components in the GameFlow object
     /// </summary>
-    private void InitManagerObjects(){
+    private void GetManagerComponents(){
         _gameMngr = GetComponent<GameManager>();
-        _playerMngr = GetComponent<PlayerController>();
+        _playerMngr = GetComponent<PlayerManager>();
         _animationMngr = GetComponent<AnimationManager>();
     }
 }

@@ -8,7 +8,7 @@ public class ElevationEntry : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision) // this collision will store players collider when they trigger the collision
     {
-        if(collision.gameObject.tag == GameManager.Instance.Tag_player){
+        if(collision.gameObject.tag == Tags.Player){
             foreach (Collider2D mountain in mountainColliders)
             {
                 mountain.enabled = false; // when we enter the mountain we turn off tilemap colliders

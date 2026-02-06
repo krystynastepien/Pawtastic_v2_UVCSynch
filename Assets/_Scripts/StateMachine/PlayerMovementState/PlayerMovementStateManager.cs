@@ -24,17 +24,26 @@ public class PlayerMovementStateManager : MonoBehaviour
 
     public void OnFrameUpdate()
     {
-        CurrentState.UpdateState_Frame(this);
+        if (CurrentState != null)
+        {
+            CurrentState.UpdateState_Frame(this);
+        }
     }
 
     public void OnUpdate()
     {
-        CurrentState.UpdateState_Physics(this);
+        if (CurrentState != null)
+        {
+            CurrentState.UpdateState_Physics(this);
+        }            
     }
 
     public void ChangeState(PlayerMovementBaseState newState){
-        CurrentState.ExitState(this);
-        CurrentState = newState;
-        CurrentState.EnterState(this);
+        if (CurrentState != null)
+        {
+            CurrentState.ExitState(this);
+            CurrentState = newState;
+            CurrentState.EnterState(this);
+        }
     }
 }

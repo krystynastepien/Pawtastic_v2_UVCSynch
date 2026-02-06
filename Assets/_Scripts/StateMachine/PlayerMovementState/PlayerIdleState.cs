@@ -4,7 +4,7 @@ public class PlayerIdleState : PlayerMovementBaseState
 {
     public override void EnterState(PlayerMovementStateManager mgr){
         //Debug.Log("player entered Idle state");
-        mgr.Animator.SetBool(AnimationManager.Instance.IsMovingParam, false);
+        mgr.Animator.SetBool(AnimatorParams.IsMoving, false);
     }
 
     public override void  UpdateState_Frame(PlayerMovementStateManager mgr){
@@ -17,7 +17,7 @@ public class PlayerIdleState : PlayerMovementBaseState
 
     }
     public override void ExitState(PlayerMovementStateManager mgr){
-        mgr.Animator.SetBool(AnimationManager.Instance.IsMovingParam, true);
+        mgr.Animator.SetBool(AnimatorParams.IsMoving, true);
     }
 
 
