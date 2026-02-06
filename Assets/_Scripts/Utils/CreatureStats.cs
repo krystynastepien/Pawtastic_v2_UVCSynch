@@ -5,24 +5,24 @@ using UnityEngine.Timeline;
 
 public abstract class CreatureStats : MonoBehaviour, IDamageable
 {
-    #region Fields - stats
- 
-    [SerializeField] private int maxHealth;
-    [SerializeField] private int currentHealth;
-    [SerializeField] private int attack;
-    [SerializeField] private int defense;
-    [SerializeField] private float speed;
+    #region Fields
+    private int _baseAttack;
+    private int _baseDefense;
+    private float _baseSpeed;
+    private int _maxHealth;
+    private int _currentHealth;
 
     #endregion
 
     #region Fake Ctor
-    public void BaseInit(int maxHealth, int attack, int defense, int speed)
+    public void BaseInit(int maxHealth, int attack, int defense, float speed)
     {
-        this.maxHealth = maxHealth;
-        this.currentHealth = maxHealth;
-        this.attack = attack;
-        this.defense = defense;
-        this.speed = speed;
+        this._baseAttack = attack;
+        this._baseDefense = defense;
+        this._baseSpeed = speed;
+        this._maxHealth = maxHealth;
+
+        _currentHealth = maxHealth;
     }
 
     #endregion
@@ -32,27 +32,27 @@ public abstract class CreatureStats : MonoBehaviour, IDamageable
     /// <summary>
     /// returns character's max health value
     /// </summary>
-    public int MaxHealth { get => maxHealth; set => maxHealth = value; }
-
+    public int MaxHealth { get => _maxHealth; set => _maxHealth = value; }
 
     /// <summary>
     /// returns character's current health value
     /// </summary>
-    public int CurrentHealth { get => currentHealth; set => currentHealth = value; }
+    public int CurrentHealth { get => _currentHealth; set => _currentHealth = value; }
     
     /// <summary>
     /// returns character's attack value
     /// </summary>
-    public int Attack { get => attack; set => attack = value; }
+    public int Attack { get => _baseAttack; set => _baseAttack = value; }
 
     /// <summary>
     /// returns character's defense value
     /// </summary>
-    public int Defense { get => defense; set => defense = value; }
+    public int Defense { get => _baseDefense; set => _baseDefense = value; }
+
     /// <summary>
     /// returns character's speed value
     /// </summary>
-    public float Speed { get => speed; set => speed = value; }
+    public float Speed { get => _baseSpeed; set => _baseSpeed = value; }
 
     #endregion
 
@@ -83,9 +83,11 @@ public abstract class CreatureStats : MonoBehaviour, IDamageable
     /// </summary>
     /// <param name="damage"></param>
     public void Heal(int healVal){
-        maxHealth = maxHealth + healVal;
-        if(currentHealth > maxHealth)
-            currentHealth = maxHealth;
+        _maxHealth = _maxHealth + healVal;
+        if(_currentHealth > _maxHealth)
+        {
+            _currentHealth = _maxHealth;
+        }
     }
     
     #endregion

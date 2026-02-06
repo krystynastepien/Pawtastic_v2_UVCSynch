@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class PlayerHealthController : CreatureStats
 {
- #region Constants
-    private const int MAX_LIVES = 9;
-    #endregion
-
     #region Serialized Fields
     [SerializeField] private int _playerMaxLives;
-    [SerializeField] private int _playerCurrentLives;
+    #endregion
+
+    #region  Fields
+    private int _playerCurrentLives;
     #endregion
 
     #region Properties
@@ -18,9 +17,9 @@ public class PlayerHealthController : CreatureStats
     /// Maximum number of lives the player can have
     /// </summary>
     public int MaxLives { get => _playerMaxLives; set => _playerMaxLives = value; }
-    
+
     /// <summary>
-    /// Current number of lives remaining. Character dies when this reaches 0.
+    /// Current number of lives remaining. Character dies when it reaches 0.
     /// </summary>
     public int CurrentLives { get => _playerCurrentLives; set => _playerCurrentLives = value; }
     #endregion
@@ -35,18 +34,14 @@ public class PlayerHealthController : CreatureStats
     #region Initialization
     public void OnStart()
     {
-        BaseInit(maxHealth: 5, attack: 5, defense: 2, speed: 5);
-        MaxLives = MAX_LIVES;
-        CurrentLives = MAX_LIVES;
-    }
-    #endregion
-
-    #region Lifecycle Methods
-    /// <summary>
-    /// execute on FixedUpdate in GameFlow
-    /// </summary>
-    public void OnUpdate()
-    {
+        BaseInit(
+            PlayerStats.MAX_HEALTH,
+            PlayerStats.BASE_ATTACK,
+            PlayerStats.BASE_DEFENSE,
+            PlayerStats.BASE_SPEED
+        );
+        MaxLives = PlayerStats.MAX_LIVES;
+        CurrentLives = PlayerStats.MAX_LIVES;
     }
     #endregion
 
@@ -55,12 +50,12 @@ public class PlayerHealthController : CreatureStats
     {
         CurrentHealth -= damageVal;
 
-        if(CurrentHealth <= 0)
-        { 
-            if(CurrentLives == 1)
+        if (CurrentHealth <= 0)
+        {
+            if (CurrentLives == 1)
             {
                 gameObject.SetActive(false);
-                GameLogger.Log("PLAYER died", LoggerConfig.LogCategoryFlags.Player,this);
+                GameLogger.Log("PLAYER died", LoggerConfig.LogCategoryFlags.Player, this);
             }
             else
             {
@@ -72,13 +67,13 @@ public class PlayerHealthController : CreatureStats
 
     public override void TakeDamageOverGivenTime(float time, int damageVal)
     {
-        if(_damageCoroutine == null)
+        if (_damageCoroutine == null)
             _damageCoroutine = StartCoroutine(DamageOverGivenTimeCoroutine(time, damageVal));
         else
         {
             StopActiveDamageCoroutine();
             _damageCoroutine = StartCoroutine(DamageOverGivenTimeCoroutine(time, damageVal));
-        }    
+        }
     }
 
     /// <summary>
@@ -87,7 +82,7 @@ public class PlayerHealthController : CreatureStats
     public override void TakeDamageForSeconds(float seconds, int damageVal)
     {
         Debug.Log("_damageCoroutine: " + _damageCoroutine);
-        if(_damageCoroutine == null)
+        if (_damageCoroutine == null)
             _damageCoroutine = StartCoroutine(DamageForSecondsCoroutine(seconds, damageVal));
         else
         {
@@ -98,7 +93,7 @@ public class PlayerHealthController : CreatureStats
 
     public override void StopActiveDamageCoroutine()
     {
-        if(_damageCoroutine != null)
+        if (_damageCoroutine != null)
             StopCoroutine(_damageCoroutine);
     }
     #endregion
@@ -111,7 +106,7 @@ public class PlayerHealthController : CreatureStats
     {
         float amountDamaged = 0;
         int damagePerLoop = (int)Math.Round(damageValMax / duration);
-        if(damagePerLoop == 0)
+        if (damagePerLoop == 0)
             damagePerLoop = 1;
 
         while (amountDamaged < damageValMax)
@@ -127,7 +122,7 @@ public class PlayerHealthController : CreatureStats
     /// </summary>
     public override IEnumerator DamageForSecondsCoroutine(float seconds, int damageVal)
     {
-        while(CurrentHealth > 0)
+        while (CurrentHealth > 0)
         {
             Debug.Log("inside DamageForSecondsCoroutine, seconds: " + seconds + ", damage: " + damageVal);
             seconds = (int)Math.Round(seconds);
