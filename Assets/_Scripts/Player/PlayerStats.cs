@@ -3,8 +3,8 @@ using UnityEngine;
 public static class PlayerStats
 {
     #region Health & Lives
-    public const int MAX_HEALTH = 5;
-    public const int MAX_LIVES = 3; //9;
+    public const int INIT_MAX_HEALTH = 2;
+    public const int INIT_MAX_LIVES = 3;
     #endregion
 
     #region Combat Stats

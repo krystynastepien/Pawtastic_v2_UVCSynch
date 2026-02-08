@@ -35,13 +35,13 @@ public class PlayerHealthController : CreatureStats
     public void OnStart()
     {
         BaseInit(
-            PlayerStats.MAX_HEALTH,
+            PlayerStats.INIT_MAX_HEALTH,
             PlayerStats.BASE_ATTACK,
             PlayerStats.BASE_DEFENSE,
             PlayerStats.BASE_SPEED
         );
-        MaxLives = PlayerStats.MAX_LIVES;
-        CurrentLives = PlayerStats.MAX_LIVES;
+        MaxLives = PlayerStats.INIT_MAX_LIVES;
+        CurrentLives = PlayerStats.INIT_MAX_LIVES;
     }
     #endregion
 

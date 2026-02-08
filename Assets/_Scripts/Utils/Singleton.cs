@@ -19,5 +19,6 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour // T is generi
         }
         
         Instance = this as T;
+        GameLogger.Log("Created manager: " + Instance.GetType(), LoggerConfig.LogCategoryFlags.System, Instance);
     }
 }
