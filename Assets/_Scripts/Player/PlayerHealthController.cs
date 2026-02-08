@@ -25,7 +25,15 @@ public class PlayerHealthController : CreatureStats
     public int CurrentHeartCount { get => _currentHeartCount; private set => _currentHeartCount = value; }
     #endregion
 
+    #region Events
+        /// Action is a delegate that doesnt return value
+        /// Action<int, int> means: "methods that take 2 ints and return nothing"
+    /// <summary>
+    /// 
+    /// </summary>
+    public event Action OnHealthChangedEvent;
 
+    #endregion
 
     #region IManager Lifecycle Methods (GameFlow)
     public void OnStart()
@@ -61,23 +69,14 @@ public class PlayerHealthController : CreatureStats
     public override void TakeDamage(int damageVal)
     {
         CurrentHealth -= damageVal;
-
         if (CurrentHealth <= 0)
         {
-            //todo: count correctly, the heart count must be recalculated before checking...
-            if (CurrentHeartCount == 1)
-            {
-                gameObject.SetActive(false);
-                GameLogger.Log("PLAYER died", LoggerConfig.LogCategoryFlags.Player, this);
-            }
-            else
-            {
-                CurrentHeartCount--; // CurrentLives = CurrentLives - 1
-                CurrentHealth = MaxHealth;
-            }
+            GameLogger.Log("PLAYER died", LoggerConfig.LogCategoryFlags.Player, this);
+            gameObject.SetActive(false);         
         }
 
-        HUDManager.Instance.UpdateHUD_OnHealthChange(); // TODO: should it be here? to consider where to put it
+        // The ?. is null-check: "only invoke if someone is listening (there is a subscriber to this event)"
+        OnHealthChangedEvent?.Invoke();
     }
 
     public override void TakeDamageOverGivenTime(float time, int damageVal)
