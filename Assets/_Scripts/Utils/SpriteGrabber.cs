@@ -59,7 +59,7 @@ namespace Pawtastic.Utils
 
             if (string.IsNullOrEmpty(spriteName))
             {
-                GameLogger.LogError("[SpriteGrabber][GetHeartSpriteName(HeartState state)] Can't find the HeartState", LoggerConfig.LogCategoryFlags.UI);
+                GameLogger.LogError("[SpriteGrabber] Can't find the HeartState", LoggerConfig.LogCategoryFlags.UI);
             }
 
             return spriteName;

@@ -10,13 +10,13 @@ public class PlayerCollisions : MonoBehaviour
 
     void OnTriggerExit2D(Collider2D collision)
     {
-        Debug.Log("OnTriggerExit2D");
+        //Debug.Log("OnTriggerExit2D");
         StopCollisionOverTime(collision.gameObject);
     }
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-      Debug.Log("OnCollisionEnter2D");
+      //Debug.Log("OnCollisionEnter2D");
       ProcessCollision(collision.gameObject);
     }
 

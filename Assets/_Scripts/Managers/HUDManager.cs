@@ -32,7 +32,10 @@ public class HUDManager : Singleton<HUDManager>, IManager
     #endregion
 
     #region Public Methods
-    // Your public methods here
+    public void UpdateHUD_OnHealthChange()
+    {
+        _healthBarController.UpdateHeartPanel();
+    }
     #endregion
 
     #region Private Methods

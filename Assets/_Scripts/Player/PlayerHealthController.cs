@@ -4,65 +4,80 @@ using UnityEngine;
 
 public class PlayerHealthController : CreatureStats
 {
-    #region Serialized Fields
-    [SerializeField] private int _playerMaxLives;
-    #endregion
-
     #region  Fields
-    private int _playerCurrentLives;
-    #endregion
-
-    #region Properties
-    /// <summary>
-    /// Maximum number of lives the player can have
-    /// </summary>
-    public int MaxLives { get => _playerMaxLives; set => _playerMaxLives = value; }
-
-    /// <summary>
-    /// Current number of lives remaining. Character dies when it reaches 0.
-    /// </summary>
-    public int CurrentLives { get => _playerCurrentLives; set => _playerCurrentLives = value; }
-    #endregion
-
-    #region Fields
+    private int _maxHeartCount;
+    private int _currentHeartCount;
     /// <summary>
     /// Tracks active damage coroutine to prevent multiple simultaneous damage effects
     /// </summary>
     private Coroutine _damageCoroutine;
     #endregion
 
-    #region Initialization
+    #region Properties
+    /// <summary>
+    /// Maximum number of lives the player can have
+    /// </summary>
+    public int MaxHeartCount { get => _maxHeartCount; private set => _maxHeartCount = value; }
+
+    /// <summary>
+    /// Current number of lives remaining. Character dies when it reaches 0.
+    /// </summary>
+    public int CurrentHeartCount { get => _currentHeartCount; private set => _currentHeartCount = value; }
+    #endregion
+
+
+
+    #region IManager Lifecycle Methods (GameFlow)
     public void OnStart()
     {
+        InitPlayer();
+    }
+
+    #endregion
+
+    #region Initialization
+    private void InitPlayer()
+    {
+        int maxLifeValue;
+
+        _maxHeartCount = PlayerStats.INIT_MAX_HEART_COUNT;
+        _currentHeartCount = PlayerStats.INIT_MAX_HEART_COUNT;
+        maxLifeValue = PlayerStats.BASE_HEART_LIFE * _currentHeartCount;
         BaseInit(
-            PlayerStats.INIT_MAX_HEALTH,
+            maxLifeValue,
             PlayerStats.BASE_ATTACK,
             PlayerStats.BASE_DEFENSE,
             PlayerStats.BASE_SPEED
         );
-        MaxLives = PlayerStats.INIT_MAX_LIVES;
-        CurrentLives = PlayerStats.INIT_MAX_LIVES;
     }
+   
     #endregion
 
     #region Damage Methods
+    /// <summary>
+    /// Player has X hearts. each heart has init value = X * heartVal = max life.
+    /// </summary>
+    /// <param name="damageVal"></param>
     public override void TakeDamage(int damageVal)
     {
         CurrentHealth -= damageVal;
 
         if (CurrentHealth <= 0)
         {
-            if (CurrentLives == 1)
+            //todo: count correctly, the heart count must be recalculated before checking...
+            if (CurrentHeartCount == 1)
             {
                 gameObject.SetActive(false);
                 GameLogger.Log("PLAYER died", LoggerConfig.LogCategoryFlags.Player, this);
             }
             else
             {
-                CurrentLives--; // CurrentLives = CurrentLives - 1
+                CurrentHeartCount--; // CurrentLives = CurrentLives - 1
                 CurrentHealth = MaxHealth;
             }
         }
+
+        HUDManager.Instance.UpdateHUD_OnHealthChange(); // TODO: should it be here? to consider where to put it
     }
 
     public override void TakeDamageOverGivenTime(float time, int damageVal)
@@ -124,9 +139,10 @@ public class PlayerHealthController : CreatureStats
     {
         while (CurrentHealth > 0)
         {
-            Debug.Log("inside DamageForSecondsCoroutine, seconds: " + seconds + ", damage: " + damageVal);
             seconds = (int)Math.Round(seconds);
             TakeDamage(damageVal);
+            GameLogger.Log($"Player is taking continous damage: {damageVal}dmg over {seconds}sec.", LoggerConfig.LogCategoryFlags.Player, this);
+            GameLogger.Log($"Players current Life: {PlayerManager.Instance._playerHealth.CurrentHealth}", LoggerConfig.LogCategoryFlags.Player, this);
             yield return new WaitForSeconds(seconds);
         }
     }

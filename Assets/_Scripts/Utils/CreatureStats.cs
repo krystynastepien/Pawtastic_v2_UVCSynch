@@ -11,20 +11,6 @@ public abstract class CreatureStats : MonoBehaviour, IDamageable
     private float _baseSpeed;
     private int _maxHealth;
     private int _currentHealth;
-
-    #endregion
-
-    #region Fake Ctor
-    public void BaseInit(int maxHealth, int attack, int defense, float speed)
-    {
-        this._baseAttack = attack;
-        this._baseDefense = defense;
-        this._baseSpeed = speed;
-        this._maxHealth = maxHealth;
-
-        _currentHealth = maxHealth;
-    }
-
     #endregion
 
     #region Properties
@@ -53,6 +39,20 @@ public abstract class CreatureStats : MonoBehaviour, IDamageable
     /// returns character's speed value
     /// </summary>
     public float Speed { get => _baseSpeed; set => _baseSpeed = value; }
+
+    #endregion
+
+
+    #region Fake Ctor
+    public void BaseInit(int maxHealth, int attack, int defense, float speed)
+    {
+        _baseAttack = attack;
+        _baseDefense = defense;
+        _baseSpeed = speed;
+        _maxHealth = maxHealth;
+
+        _currentHealth = maxHealth;
+    }
 
     #endregion
 
