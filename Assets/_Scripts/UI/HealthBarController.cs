@@ -14,7 +14,7 @@ public class HealthBarController : MonoBehaviour
     #endregion
 
     #region Serialized Fields
-    [SerializeField] private GameObject _heartObj;
+    [SerializeField] private GameObject _heartPrefab;
     [SerializeField] private GameObject _heartsPanel;
     #endregion Serialized Fields
 
@@ -29,7 +29,7 @@ public class HealthBarController : MonoBehaviour
     public void OnStart()
     {
         AssignSprites();
-        ConfigureUI(PlayerStats.INIT_MAX_HEART_COUNT);
+        InitializeHealthBarUI(PlayerStats.INIT_MAX_HEART_COUNT);
         GetPlayerCtx();
     }
     #endregion Lifecycle Methods (GameFlow)
@@ -54,7 +54,7 @@ public class HealthBarController : MonoBehaviour
             ClearHeartsPanel();
 
             //update heart ui panel - rerender hearts
-            ConfigureUI(newHeartCount);
+            InitializeHealthBarUI(newHeartCount);
 
             //update Last heart object to correct sprite
             UpdateLastHeartInPanel();
@@ -81,7 +81,7 @@ public class HealthBarController : MonoBehaviour
     ///  Initialize heart objects in panel with set amount of full hearts
     /// </summary>
     /// <param name="heartCount">amount of hearts to create</param>
-    private void ConfigureUI(int heartCount)
+    private void InitializeHealthBarUI(int heartCount)
     {
         //GameLogger.Log($"Configuring UI, hearts to render: {heartCount} ", LoggerConfig.LogCategoryFlags.UI);
         for (int i = 0; i < heartCount; i++)
@@ -98,7 +98,7 @@ public class HealthBarController : MonoBehaviour
     private GameObject CreateFullHeartObj(Sprite fullHeartSprite)
     {
         // create prefab object
-        GameObject newHeart = Instantiate(_heartObj, _heartsPanel.transform);
+        GameObject newHeart = Instantiate(_heartPrefab, _heartsPanel.transform);
         if (newHeart == null)
         {
             GameLogger.LogError("Cannot create new heart object for HUD lifebar.", LoggerConfig.LogCategoryFlags.UI, newHeart);

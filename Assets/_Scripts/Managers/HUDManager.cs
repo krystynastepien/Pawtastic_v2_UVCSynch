@@ -4,6 +4,7 @@ public class HUDManager : Singleton<HUDManager>, IManager
 {
     #region Serialized Fields
         [SerializeField] private HealthBarController _healthBarController;
+        [SerializeField] private InventoryController _inventoryController;
 
     #endregion
 
@@ -20,6 +21,7 @@ public class HUDManager : Singleton<HUDManager>, IManager
     public void OnStart()
     {
         _healthBarController.OnStart();
+        _inventoryController.OnStart();
         SubscribeToEvents();
     }
 
@@ -29,6 +31,14 @@ public class HUDManager : Singleton<HUDManager>, IManager
 
     public void OnFrameUpdate()
     {
+    }
+
+    public void Update()
+    {
+         if (Input.GetKeyDown(KeyCode.I)) {
+            GameLogger.Log("pressed I", LoggerConfig.LogCategoryFlags.UI, _inventoryController);
+            ShowOrHide(UIElement.InventoryUI);
+        }
     }
     #endregion
 
@@ -54,8 +64,6 @@ public class HUDManager : Singleton<HUDManager>, IManager
         PlayerManager.Instance._playerHealth.OnHealthChangedEvent += UpdateHUD_OnHealthChange;
     }
     
-    
-    // Your private helper methods here
     private void OnDestroy()
     {
         //Unsubscribe to prevent memory leaks
@@ -64,5 +72,33 @@ public class HUDManager : Singleton<HUDManager>, IManager
             PlayerManager.Instance._playerHealth.OnHealthChangedEvent -= UpdateHUD_OnHealthChange;
         }
     }
+
+    /// <summary>
+    /// show or hide given HUD element
+    /// </summary>
+    /// <param name="element"></param>
+    private void ShowOrHide(UIElement element)
+    {
+        switch (element)
+        {
+            case UIElement.InventoryUI:
+                _inventoryController.OnShowOrHide();
+                break;
+            default:
+                break;
+        }
+    }
+
     #endregion
+}
+
+/// <summary>
+/// ui elements to control
+/// </summary>
+enum UIElement
+{
+    LifePanelUI,
+    InventoryUI,
+    PauseUI,
+    MainMenuUI,
 }

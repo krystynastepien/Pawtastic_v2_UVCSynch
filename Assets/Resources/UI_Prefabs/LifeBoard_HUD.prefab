@@ -302,7 +302,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70ea0b3c3e3e93848a65655254122e3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _heartObj: {fileID: 4091110068135292306, guid: 65f5adbfcb434ef4c9f10005cb933748, type: 3}
+  _heartPrefab: {fileID: 4091110068135292306, guid: 65f5adbfcb434ef4c9f10005cb933748, type: 3}
   _heartsPanel: {fileID: 3546901934932714606}
 --- !u!1 &6485010877635878618
 GameObject:

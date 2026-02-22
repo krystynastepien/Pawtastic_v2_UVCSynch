@@ -18,6 +18,10 @@ public static class PlayerStats
     //public const float JUMP_FORCE = 10f;
     #endregion
 
+
+    #region Inventory Stats ?
+    #endregion
+
     // #region Animation Parameters
     // public const string ANIM_HORIZONTAL_VELOCITY = "xVelocity_AnimatorParam";
     // public const string ANIM_VERTICAL_VELOCITY = "yVelocity_AnimatorParam";
