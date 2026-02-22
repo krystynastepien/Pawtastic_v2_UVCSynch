@@ -1,4 +1,5 @@
 using UnityEngine;
+using Pawtastic.Utils.Enums;
 
 namespace Pawtastic.Utils
 {
@@ -6,6 +7,7 @@ namespace Pawtastic.Utils
     {
         #region CONST - Sprite paths
         private const string HEART_SPRITE_PATH = "UI_Assets/HUD";
+        private const string ITEM_SPRITE_PATH = "UI_Assets/HUD";
         #endregion
 
         #region  Sprite Loaders
@@ -23,6 +25,25 @@ namespace Pawtastic.Utils
             if (spriteObj == null)
             {
                 GameLogger.LogError("[SpriteGrabber][LoadHeartSprite(HeartState state)] The sprite cannot be found. Path is wrong or the sprite doesnt exist", LoggerConfig.LogCategoryFlags.UI);
+            }
+
+            return spriteObj;
+        }
+
+        /// <summary>
+        /// Returns item sprite for HUD UI Inventory
+        /// </summary>
+        /// <param name="state">heart state enum</param>
+        /// <returns></returns>
+        public static Sprite LoadItemSprite(Items state)
+        {
+            Sprite spriteObj;
+            string spriteName = GetItemSpriteName(state);
+
+            spriteObj = Resources.Load<Sprite>(ITEM_SPRITE_PATH + "/" + spriteName);
+            if (spriteObj == null)
+            {
+                GameLogger.LogError("[SpriteGrabber][LoadItemSprite] The sprite cannot be found. Path is wrong or the sprite doesnt exist", LoggerConfig.LogCategoryFlags.UI);
             }
 
             return spriteObj;
@@ -50,6 +71,55 @@ namespace Pawtastic.Utils
                     break;
                 case HUD_HeartState.Broken:
                     spriteName = "heart_broken";
+                    break;
+
+                    // default:
+                    //     spriteName = ""; // TODO: make default wrong SPRITE LOADER
+                    //     break;
+            }
+
+            if (string.IsNullOrEmpty(spriteName))
+            {
+                GameLogger.LogError("[SpriteGrabber] Can't find the HeartState", LoggerConfig.LogCategoryFlags.UI);
+            }
+
+            return spriteName;
+        }
+
+        /// <summary>
+        /// Gets name of Heart sprite from HUD health bar depending on which state is needed
+        /// </summary>
+        /// <param name="item">heart state enum</param>
+        /// <returns></returns>
+        private static string GetItemSpriteName(Items item)
+        {
+            string spriteName = "";
+
+            switch (item)
+            {
+                case Items.Fish:
+                    spriteName = "Fish";
+                    break;
+                case Items.Apple:
+                    spriteName = "Apple";
+                    break;
+                case Items.Badge:
+                    spriteName = "Badge";
+                    break;
+                case Items.Feather:
+                    spriteName = "Feather";
+                    break;
+                case Items.Helmet:
+                    spriteName = "Helmet";
+                    break;
+                case Items.Key:
+                    spriteName = "Key2";
+                    break;
+                case Items.Mask:
+                    spriteName = "Mask";
+                    break;
+                case Items.Potion:
+                    spriteName = "Potion";
                     break;
 
                     // default:

@@ -134,6 +134,7 @@ public class HealthBarController : MonoBehaviour
             }
         }
     }
+    
     #endregion private methods
 
 
@@ -170,7 +171,7 @@ public class HealthBarController : MonoBehaviour
         }
         _existingHeartsList.Clear();
     }
-    #endregion helpers?
+    #endregion
 
 
 }

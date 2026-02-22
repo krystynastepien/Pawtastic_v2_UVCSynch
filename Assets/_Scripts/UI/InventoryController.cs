@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -9,16 +10,24 @@ public class InventoryController : MonoBehaviour
 
 
     #region Serialized Fields
-    [SerializeField] private InventoryItem _itemPrefab;
+    [SerializeField] private InventoryItemSlot _itemPrefab;
     [SerializeField] private RectTransform _contentPanel;
+    [SerializeField] private InventoryItemDescription _descriptionPanel;
+
+    [SerializeField] private List<ItemData> _TEST_inventoryItems = new List<ItemData>(4);
+
     #endregion SerializedFields
 
     #region Fields
 
     private GameObject _inventoryCanvas;
-    private List<InventoryItem> _inventoryItems = new List<InventoryItem>();
-
+    private List<InventoryItemSlot> _inventoryItems = new List<InventoryItemSlot>();
+    private bool _isVisible;
     #endregion Fields
+
+    #region Properties
+    public bool IsVisible {get => _isVisible; private set => _isVisible = value; }
+    #endregion
 
     #region Lifecycle Methods (GameFlow)
     public void OnStart()
@@ -28,6 +37,11 @@ public class InventoryController : MonoBehaviour
 
         ///create empty inventory with 7 slots
         InitializeInventoryUI(7);
+        // TEMP: put a test item in first slot
+        _inventoryItems[0].AssignItem(_TEST_inventoryItems[0], 1);
+        _inventoryItems[1].AssignItem(_TEST_inventoryItems[1], 99);
+        _inventoryItems[2].AssignItem(_TEST_inventoryItems[2], 3);
+        OnHide();
     }
     #endregion Lifecycle Methods (GameFlow)
 
@@ -36,11 +50,23 @@ public class InventoryController : MonoBehaviour
     #region public methods
 
     /// <summary>
-    /// show or hide the inventory window
+    /// hide the inventory window
     /// </summary>
-    public void OnShowOrHide()
+    public void OnHide()
     {
-        _inventoryCanvas.SetActive(!_inventoryCanvas.activeSelf);
+        _inventoryCanvas.SetActive(false);
+        _descriptionPanel.ClearDescription();
+        _isVisible = false;
+    }
+
+    /// <summary>
+    /// show the inventory window
+    /// </summary>
+    public void OnShow()
+    {
+        _isVisible = true;
+        
+        _inventoryCanvas.SetActive(true);
     }
     
     #endregion public methods
@@ -55,35 +81,80 @@ public class InventoryController : MonoBehaviour
     {
         for (int i = 0; i < slotCount; i++)
         {
-           CreateItemSlot();
+           InventoryItemSlot newSlot = CreateItemSlot();
+           _inventoryItems.Add(newSlot);
         }
+        _descriptionPanel.OnInit();
+    
     }
 
-    #endregion private methods
-    /// <summary>
+        /// <summary>
     /// Create copy of item slot object 
     /// </summary>
     /// <param name="fullHeartSprite"></param>
     /// <returns></returns>
-    private InventoryItem CreateItemSlot()
+    private InventoryItemSlot CreateItemSlot()
     {
         // create prefab object
-        InventoryItem newSlot = Instantiate(_itemPrefab, _contentPanel.transform);
+        InventoryItemSlot newSlot = Instantiate(_itemPrefab, _contentPanel.transform);
         if (newSlot == null)
         {
             GameLogger.LogError("Cannot create new item slot object for HUD Inventory.", LoggerConfig.LogCategoryFlags.UI, newSlot);
             return null;
         }
+        newSlot.OnInit();
+        SubscribeToEvents(newSlot);
 
-        // Get existing Image component ?
-
-        _inventoryItems.Add(newSlot);
         return newSlot;
     }
 
+    /// <summary>
+    /// assign delegates
+    /// </summary>
+    private void SubscribeToEvents(InventoryItemSlot itemSlot)
+    {
+        //PlayerManager.Instance._playerHealth.OnHealthChangedEvent += UpdateHUD_OnHealthChange;
+        itemSlot.OnLeftMouseBtnClick += HandleItemSelection;
+        itemSlot.OnRightMouseBtnClick += HandleShowItemActions;
+        itemSlot.OnItemBeginDrag += HandleBeginDrag;
+        itemSlot.OnItemEndDrag += HandleEndDrag;
+        itemSlot.OnItemDroppedOn += HandleItemsSwap;
+        
+    }
+
+    private void HandleItemsSwap(InventoryItemSlot slot)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void HandleEndDrag(InventoryItemSlot slot)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void HandleBeginDrag(InventoryItemSlot slot)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void HandleShowItemActions(InventoryItemSlot slot)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void HandleItemSelection(InventoryItemSlot slot)
+    {
+        slot.Select();
+        var data = slot.GetItemData();
+        if (data != null)
+            _descriptionPanel.SetDescription(data);
+        GameLogger.Log("Selected: " + slot.name, LoggerConfig.LogCategoryFlags.UI, slot);
+    }
 
 
-    
+    #endregion private methods
+
+
     #region helpers
     #endregion helpers
 

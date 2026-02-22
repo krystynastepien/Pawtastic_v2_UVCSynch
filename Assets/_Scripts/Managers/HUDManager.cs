@@ -37,7 +37,7 @@ public class HUDManager : Singleton<HUDManager>, IManager
     {
          if (Input.GetKeyDown(KeyCode.I)) {
             GameLogger.Log("pressed I", LoggerConfig.LogCategoryFlags.UI, _inventoryController);
-            ShowOrHide(UIElement.InventoryUI);
+            ShowOrHide(UIElement.InventoryUI, !_inventoryController.IsVisible);
         }
     }
     #endregion
@@ -77,12 +77,15 @@ public class HUDManager : Singleton<HUDManager>, IManager
     /// show or hide given HUD element
     /// </summary>
     /// <param name="element"></param>
-    private void ShowOrHide(UIElement element)
+    private void ShowOrHide(UIElement element, bool enable)
     {
         switch (element)
         {
             case UIElement.InventoryUI:
-                _inventoryController.OnShowOrHide();
+                if (enable)
+                    _inventoryController.OnShow();
+                else
+                    _inventoryController.OnHide();              
                 break;
             default:
                 break;
