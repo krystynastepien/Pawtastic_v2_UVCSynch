@@ -31,8 +31,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2876521290118621998}
   - {fileID: 7956111830332189382}
+  - {fileID: 2876521290118621998}
   - {fileID: 9109734057220368400}
   - {fileID: 2373501988816936562}
   - {fileID: 8117954341417318699}
@@ -140,6 +140,22 @@ MonoBehaviour:
         - m_Target: {fileID: 8482645647592741222}
           m_TargetAssemblyTypeName: InventoryItemSlot, Assembly-CSharp
           m_MethodName: OnDrop
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 5
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 8482645647592741222}
+          m_TargetAssemblyTypeName: InventoryItemSlot, Assembly-CSharp
+          m_MethodName: OnDrag
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}

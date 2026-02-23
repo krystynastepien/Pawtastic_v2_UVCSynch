@@ -31,6 +31,7 @@ public class InventoryItemSlot : MonoBehaviour
     public event Action<InventoryItemSlot> OnLeftMouseBtnClick;    
     public event Action<InventoryItemSlot> OnItemDroppedOn;
     public event Action<InventoryItemSlot> OnItemBeginDrag;
+    public event Action<InventoryItemSlot> OnItemDrag;
     public event Action<InventoryItemSlot> OnItemEndDrag;
     public event Action<InventoryItemSlot> OnRightMouseBtnClick;
     #endregion
@@ -98,6 +99,13 @@ public class InventoryItemSlot : MonoBehaviour
     }
 
     public ItemData GetItemData() => _itemData;
+    public GameObject GetItemImage() => _itemImg.gameObject;    
+    public void SetItemImagePosition(Vector3 input)
+    {
+        _itemImg.gameObject.transform.position = input;
+    }
+    
+
 
 
     #endregion
@@ -110,6 +118,11 @@ public class InventoryItemSlot : MonoBehaviour
         if (_isEmpty) return;     
         
         OnItemBeginDrag?.Invoke(this);
+    }
+
+    public void OnDrag()
+    {        
+        OnItemDrag?.Invoke(this);
     }
 
     public void OnEndDrag()

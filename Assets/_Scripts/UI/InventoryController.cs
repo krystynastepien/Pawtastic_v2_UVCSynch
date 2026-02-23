@@ -23,6 +23,7 @@ public class InventoryController : MonoBehaviour
     private GameObject _inventoryCanvas;
     private List<InventoryItemSlot> _inventoryItems = new List<InventoryItemSlot>();
     private bool _isVisible;
+    private Transform _parentAfterDrag;
     #endregion Fields
 
     #region Properties
@@ -117,31 +118,13 @@ public class InventoryController : MonoBehaviour
         itemSlot.OnLeftMouseBtnClick += HandleItemSelection;
         itemSlot.OnRightMouseBtnClick += HandleShowItemActions;
         itemSlot.OnItemBeginDrag += HandleBeginDrag;
+        itemSlot.OnItemDrag += HandleDrag;
         itemSlot.OnItemEndDrag += HandleEndDrag;
         itemSlot.OnItemDroppedOn += HandleItemsSwap;
         
     }
 
-    private void HandleItemsSwap(InventoryItemSlot slot)
-    {
-        throw new NotImplementedException();
-    }
-
-    private void HandleEndDrag(InventoryItemSlot slot)
-    {
-        throw new NotImplementedException();
-    }
-
-    private void HandleBeginDrag(InventoryItemSlot slot)
-    {
-        throw new NotImplementedException();
-    }
-
-    private void HandleShowItemActions(InventoryItemSlot slot)
-    {
-        throw new NotImplementedException();
-    }
-
+        #region drag and drop handlers
     private void HandleItemSelection(InventoryItemSlot slot)
     {
         slot.Select();
@@ -151,7 +134,36 @@ public class InventoryController : MonoBehaviour
         GameLogger.Log("Selected: " + slot.name, LoggerConfig.LogCategoryFlags.UI, slot);
     }
 
+    private void HandleBeginDrag(InventoryItemSlot slot)
+    {
+        GameLogger.Log("Begin drag", LoggerConfig.LogCategoryFlags.UI);   
+        _parentAfterDrag = slot.transform.parent; 
 
+    }
+    private void HandleDrag(InventoryItemSlot slot)
+    {
+        GameLogger.Log("Drag", LoggerConfig.LogCategoryFlags.UI);
+        slot.SetItemImagePosition(Input.mousePosition);
+    }
+
+    private void HandleEndDrag(InventoryItemSlot slot)
+    {
+        GameLogger.Log("End drag", LoggerConfig.LogCategoryFlags.UI);  
+        slot.transform.SetParent(_parentAfterDrag);
+    }
+
+    private void HandleShowItemActions(InventoryItemSlot slot)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void HandleItemsSwap(InventoryItemSlot slot)
+    {
+        throw new NotImplementedException();
+    }
+
+
+        #endregion drag and drop handlers
     #endregion private methods
 
 
