@@ -40,8 +40,8 @@ public class InventoryController : MonoBehaviour
         InitializeInventoryUI(6);
         // TEMP: put a test item in first slot
         _inventoryItems[0].AssignItem(_TEST_inventoryItems[0], 1);
-        _inventoryItems[1].AssignItem(_TEST_inventoryItems[1], 99);
-        _inventoryItems[2].AssignItem(_TEST_inventoryItems[2], 3);
+        //_inventoryItems[1].AssignItem(_TEST_inventoryItems[1], 99);
+        //_inventoryItems[2].AssignItem(_TEST_inventoryItems[2], 3);
         OnHide();
     }
     #endregion Lifecycle Methods (GameFlow)

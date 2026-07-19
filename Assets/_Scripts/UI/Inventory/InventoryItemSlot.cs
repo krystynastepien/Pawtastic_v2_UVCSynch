@@ -69,11 +69,13 @@ public class InventoryItemSlot : MonoBehaviour
         _itemImg.sprite = null;
         _itemImg.color = EmptyColor;
         _itemData = null;
+        _itemImg.enabled = false;
     }
 
     public void AssignItem(ItemData item, int quantity)
     {
         _isEmpty = false;
+        _itemImg.enabled = true;
         _itemImg.sprite = item.Icon;
         _itemImg.color = item.Color;
         SetCounter(item, quantity);
