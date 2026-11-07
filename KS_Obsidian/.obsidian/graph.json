@@ -1,0 +1,30 @@
+{
+  "collapse-filter": true,
+  "search": "",
+  "showTags": false,
+  "showAttachments": false,
+  "hideUnresolved": false,
+  "showOrphans": true,
+  "collapse-color-groups": true,
+  "colorGroups": [
+    {
+      "query": "INVENTORY",
+      "color": {
+        "a": 1,
+        "rgb": 16769978
+      }
+    }
+  ],
+  "collapse-display": true,
+  "showArrow": true,
+  "textFadeMultiplier": 0.1,
+  "nodeSizeMultiplier": 1.16057303020866,
+  "lineSizeMultiplier": 1.50239800685145,
+  "collapse-forces": false,
+  "centerStrength": 0.435689816256618,
+  "repelStrength": 16.3269293389775,
+  "linkStrength": 1,
+  "linkDistance": 313,
+  "scale": 0.08317427835927411,
+  "close": true
+}
