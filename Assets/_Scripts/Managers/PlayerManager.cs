@@ -16,7 +16,7 @@ public class PlayerManager : Singleton<PlayerManager>, IManager
     public void OnAwake()
     {
         base.Initialize(); // Call the singleton logic
-        _isReady = true;
+        //_isReady = true;
     }
 
     public void OnStart()
@@ -58,7 +58,7 @@ public class PlayerManager : Singleton<PlayerManager>, IManager
         if(_player == null)
         {
             string msg = "Object with player tag: '" + Tags.Player + "' not found";
-            GameLogger.LogError(msg, LoggerConfig.LogCategoryFlags.Player, _player);
+            GameLogger.LogCritical(msg, LoggerConfig.LogCategoryFlags.Player, _player);
             return false;
         }
         return true;
@@ -101,7 +101,7 @@ public class PlayerManager : Singleton<PlayerManager>, IManager
     private void LogMissingComponent(string componentName)
     {
         string msg = "Player object is missing component: " + componentName;
-        GameLogger.LogError(msg, LoggerConfig.LogCategoryFlags.Player, _player);
+        GameLogger.LogWarning(msg, LoggerConfig.LogCategoryFlags.Player, _player);
     }
 
     #endregion

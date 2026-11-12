@@ -38,7 +38,7 @@ public class InventoryController : MonoBehaviour
         ///create empty inventory with 6 slots
         InitializeInventoryUI(6);
         // TEMP: put a test item in first slot
-        _inventoryItems[0].AssignItem(_TEST_inventoryItems[0], 1);
+        //_inventoryItems[0].AssignItem(_TEST_inventoryItems[0], 1);
         //_inventoryItems[1].AssignItem(_TEST_inventoryItems[1], 99);
         //_inventoryItems[2].AssignItem(_TEST_inventoryItems[2], 3);
         OnHide();
@@ -99,7 +99,7 @@ public class InventoryController : MonoBehaviour
         InventoryItemSlot newSlot = Instantiate(_itemPrefab, _contentPanel.transform);
         if (newSlot == null)
         {
-            GameLogger.LogError("Cannot create new item slot object for HUD Inventory.", LoggerConfig.LogCategoryFlags.UI, newSlot);
+            GameLogger.LogWarning("Cannot create new item slot object for HUD Inventory.", LoggerConfig.LogCategoryFlags.UI, newSlot);
             return null;
         }
         newSlot.OnInit();

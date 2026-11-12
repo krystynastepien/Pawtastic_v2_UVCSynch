@@ -18,7 +18,7 @@ public class HealthBarController : MonoBehaviour
 
     #region Fields
     private List<GameObject> _existingHeartsList = new List<GameObject>();
-    private PlayerHealthController _playerCtx;
+    private PlayerHealthController _playerHealthCtx;
     private List<Image> _heartImages = new List<Image>();
     private Sprite _halfHeartSprite;
     private Sprite _fullHeartSprite;
@@ -40,13 +40,13 @@ public class HealthBarController : MonoBehaviour
     /// </summary>
     public void OnUpdateHeartPanel()
     {
-        if (_playerCtx == null)
+        if (_playerHealthCtx == null)
         {
-            GameLogger.LogError("_playerCtx is null", LoggerConfig.LogCategoryFlags.Player | LoggerConfig.LogCategoryFlags.UI, _playerCtx);
+            GameLogger.LogError("_playerHealthCtx is null", LoggerConfig.LogCategoryFlags.Player | LoggerConfig.LogCategoryFlags.UI, _playerHealthCtx);
             return;
         }
 
-        int currentHealth = _playerCtx.CurrentHealth;
+        int currentHealth = _playerHealthCtx.CurrentHealth;
         for (int i = 0; i < _heartImages.Count; i++)
     {
         // ile punktów życia przypada na serce nr i (serca liczymy od lewej, od 0)
@@ -77,10 +77,10 @@ public class HealthBarController : MonoBehaviour
     #region private methods
     private void GetPlayerCtx()
     {
-        _playerCtx = PlayerManager.Instance._playerHealth;
-        if (_playerCtx == null)
+        _playerHealthCtx = PlayerManager.Instance._playerHealth;
+        if (_playerHealthCtx == null)
         {
-            GameLogger.LogError("Failed to get player context", LoggerConfig.LogCategoryFlags.Player | LoggerConfig.LogCategoryFlags.UI, _playerCtx);
+            GameLogger.LogError("Failed to get player health context", LoggerConfig.LogCategoryFlags.Player | LoggerConfig.LogCategoryFlags.UI, _playerHealthCtx);
         }
     }
 
@@ -90,7 +90,6 @@ public class HealthBarController : MonoBehaviour
     /// <param name="heartCount">amount of hearts to create</param>
     private void InitializeHealthBarUI(int heartCount)
     {
-        //GameLogger.Log($"Configuring UI, hearts to render: {heartCount} ", LoggerConfig.LogCategoryFlags.UI);
         for (int i = 0; i < heartCount; i++)
         {
             CreateFullHeartObj(_fullHeartSprite);

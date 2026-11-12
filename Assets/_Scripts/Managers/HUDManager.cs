@@ -2,14 +2,10 @@ using UnityEngine;
 
 public class HUDManager : Singleton<HUDManager>, IManager
 {
-    #region Serialized Fields
-        [SerializeField] private HealthBarController _healthBarController;
-        [SerializeField] private InventoryController _inventoryController;
-
-    #endregion
-
-
-    #region Serialized Fields
+    #region Fields
+        private bool _isReady;
+        private HealthBarController _healthBarController;
+        private InventoryController _inventoryController;
         private PlayerHealthController _subscribedHealth;
     #endregion
 
@@ -24,6 +20,14 @@ public class HUDManager : Singleton<HUDManager>, IManager
 
     public void OnStart()
     {
+        _isReady = InitHUDElements();
+        if (!_isReady)
+        {
+            string msg = "Initializing HUDManager failed.";
+            GameLogger.LogCritical(msg, LoggerConfig.LogCategoryFlags.UI, this);
+            return;
+        }    
+
         _healthBarController.OnStart();
         _inventoryController.OnStart();
         _subscribedHealth = PlayerManager.Instance._playerHealth;
@@ -41,11 +45,64 @@ public class HUDManager : Singleton<HUDManager>, IManager
     public void Update()
     {
         if (Input.GetKeyDown(KeyCode.I)) {
-            GameLogger.Log("pressed I", LoggerConfig.LogCategoryFlags.UI, _inventoryController);
+            GameLogger.Log("User pressed I for inventory", LoggerConfig.LogCategoryFlags.UI, _inventoryController);
             ShowOrHide(UIElement.InventoryUI, !_inventoryController.IsVisible);
         }
     }
     #endregion
+
+
+    #region Initialization
+
+    /// <summary>
+    /// initialize all HUD elements
+    /// </summary>
+    /// <returns></returns>
+    private bool InitHUDElements()
+    {   
+        return InitHealthBarController() && InitInventoryController();
+    }
+
+
+    /// <summary>
+    /// Find the HealthBar Object
+    /// </summary>
+    private bool InitHealthBarController()
+    {
+        // _healthBarController = GameObject.FindObjectsByType(
+        //     typeof(HealthBarController), 
+        //     FindObjectsInactive.Include, 
+        //     FindObjectsSortMode.None)[0] as HealthBarController;
+        _healthBarController = Object.FindFirstObjectByType<HealthBarController>(FindObjectsInactive.Include);
+        if(_healthBarController == null)
+        {
+            LogMissingObject(nameof(HealthBarController));
+            return false;
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// Find the Inventory object
+    /// </summary>
+    /// <returns></returns>
+    private bool InitInventoryController()
+    {
+        // _inventoryController = GameObject.FindObjectsByType(
+        //     typeof(InventoryController), 
+        //     FindObjectsInactive.Include, 
+        //     FindObjectsSortMode.None)[0] as InventoryController;
+        _inventoryController = Object.FindFirstObjectByType<InventoryController>(FindObjectsInactive.Include);
+        if(_inventoryController == null)
+        {
+            LogMissingObject(nameof(InventoryController));
+            return false;
+        }
+        return true;
+    }
+
+    #endregion
+
 
 
 
@@ -97,6 +154,20 @@ public class HUDManager : Singleton<HUDManager>, IManager
     }
 
     #endregion
+
+    #region Helpers
+
+    /// <summary>
+    /// Loguje błąd o brakującym elemencie HUD
+    /// </summary>
+    private void LogMissingObject(string elementName)
+    {
+        string msg = "HUD is missing object: " + elementName;
+        GameLogger.LogWarning(msg, LoggerConfig.LogCategoryFlags.UI, this);
+    }
+
+    #endregion
+
 }
 
 /// <summary>

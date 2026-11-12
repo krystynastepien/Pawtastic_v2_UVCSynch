@@ -91,7 +91,7 @@ public class GameFlow : MonoBehaviour
 
         _animationMngr = GetComponent<AnimationManager>();
 
-        LogManagerInitStatus();        
+        LogManagerComponentInitStatus();        
     }
 
 
@@ -100,7 +100,7 @@ public class GameFlow : MonoBehaviour
     /// <summary>
     /// method logs once the state of managers init - whether every component was found and if not, which failed
     /// </summary>
-    private void LogManagerInitStatus()
+    private void LogManagerComponentInitStatus()
     {
         List<string> missingManagers = new List<string>();
 
@@ -111,14 +111,13 @@ public class GameFlow : MonoBehaviour
 
         if (missingManagers.Count > 0)
         {
-            string msg = $"GameFlow: Missing managers: {string.Join(", ", missingManagers)}";
-
-            GameLogger.LogError(msg, LoggerConfig.LogCategoryFlags.System, this);
+            string msg = $"Missing managers: {string.Join(", ", missingManagers)}";
+            GameLogger.LogWarning(msg, LoggerConfig.LogCategoryFlags.System, this);
             return;
         }
 
         GameLogger.Log(
-            "GameFlow: Managers' component initialization successful.",
+            "All managers' component initialization successful.",
             LoggerConfig.LogCategoryFlags.System,
             this
         );
