@@ -3,76 +3,107 @@ using UnityEngine;
 public class PlayerManager : Singleton<PlayerManager>, IManager
 {
     #region Fields
+    private bool _isReady;
     private GameObject _player;
     private PlayerActions _playerActions;
     private PlayerMovementStateManager _mngrMovementState;
     public PlayerHealthController _playerHealth;
+
+    
     #endregion
 
     #region IManager Lifecycle Methods (GameFlow)
     public void OnAwake()
     {
         base.Initialize(); // Call the singleton logic
+        _isReady = true;
     }
 
     public void OnStart()
     {
-        CreatePlayer();
+         _isReady = CreatePlayer();
+        if (!_isReady) return;    
+        
+        _mngrMovementState.OnStart();
+        _playerHealth.OnStart();
         _playerActions.OnStart();
     }
 
     public void OnFrameUpdate()
     {
+        if (!_isReady) return;
         //_playerActions.OnFrameUpdate();
         _mngrMovementState.OnFrameUpdate();
     }
 
     public void OnFixedUpdate()
     {
+        if (!_isReady) return;
         _playerActions.OnFixedUpdate();
     }
     #endregion
 
     #region Initialization
-    private void CreatePlayer()
-    {
-        InitPlayer();
-        InitPlayerComponents();
+    private bool CreatePlayer()
+    {   
+        return InitPlayer() && InitPlayerComponents();
     }
 
     /// <summary>
     /// Find Player Object
     /// </summary>
-    private void InitPlayer()
+    private bool InitPlayer()
     {
         _player = GameObject.FindWithTag(Tags.Player); 
         if(_player == null)
         {
             string msg = "Object with player tag: '" + Tags.Player + "' not found";
             GameLogger.LogError(msg, LoggerConfig.LogCategoryFlags.Player, _player);
+            return false;
         }
+        return true;
     }
 
     /// <summary>
     /// Initialize all player components
     /// </summary>
-    private void InitPlayerComponents()
+    private bool InitPlayerComponents()
     {       
-        if(_player == null)
+        //Pobierz komponenty
+        if (!_player.TryGetComponent(out _playerActions))
         {
-            string msg = "Object with player tag: '" + Tags.Player + "' not found";
-            GameLogger.LogError(msg, LoggerConfig.LogCategoryFlags.Player, _player);
-            return;
+            LogMissingComponent(nameof(PlayerActions));
+            return false;
         }
 
-        // get components
-        _playerActions = _player.GetComponent<PlayerActions>();
-        _mngrMovementState = _player.GetComponent<PlayerMovementStateManager>();
-        _playerHealth = _player.GetComponent<PlayerHealthController>();
+        if (!_player.TryGetComponent(out _mngrMovementState))
+        {
+            LogMissingComponent(nameof(PlayerMovementStateManager));
+            return false;
+        }
 
-        _mngrMovementState.OnStart();
-        _playerHealth.OnStart();
+        if (!_player.TryGetComponent(out _playerHealth))
+        {
+            LogMissingComponent(nameof(PlayerHealthController));
+            return false;
+        }
+
+        return true;
         //_playerStats = new PlayerStats(maxHealth: 10, attack: 5, defense: 2);        
     }
     #endregion
+
+    #region Helpers
+
+    /// <summary>
+    /// Loguje błąd o brakującym komponencie na obiekcie Player
+    /// </summary>
+    private void LogMissingComponent(string componentName)
+    {
+        string msg = "Player object is missing component: " + componentName;
+        GameLogger.LogError(msg, LoggerConfig.LogCategoryFlags.Player, _player);
+    }
+
+    #endregion
+
 }

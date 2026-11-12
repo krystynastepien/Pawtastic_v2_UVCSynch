@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(GameManager))]
@@ -11,34 +12,73 @@ public class GameFlow : MonoBehaviour
     [SerializeField] private HUDManager _hudMngr;
     [SerializeField] private AnimationManager _animationMngr;
 
+    private IManager[] _managersTable;
+
     private void Awake()
     {
         // get all manager objects
         GetManagerComponents();
 
+        // kolejność w tablicy to kolejność wywołań // tablica  klas IManager - moje menadzery dziedzicza po tej klasie
+        _managersTable = new IManager[]    
+        {  
+            _gameMngr, 
+            _playerMngr, 
+            _hudMngr, 
+            _animationMngr 
+        };
+
+        foreach (IManager manager in _managersTable) {  
+            manager.OnAwake();    // initialize  singletons in loop
+        }
+
         // initialize all other singletons    
-        _gameMngr.OnAwake();
-        _playerMngr.OnAwake();
-
-        _hudMngr.OnAwake();
-        _animationMngr.OnAwake();
+        // _gameMngr.OnAwake();
+        // _playerMngr.OnAwake();
+        // _hudMngr.OnAwake();
+        // _animationMngr.OnAwake();
     }
 
-    void Start()
-    {
-        _playerMngr.OnStart();
-        _hudMngr.OnStart();
+    private void Start()
+    { 
+        foreach (IManager manager in _managersTable)
+        {
+            manager.OnStart();
+        }  
     }
 
-    void FixedUpdate()    // Update is called 50 times per second (not once per frame like Update) - for physics
-    {
-        _playerMngr.OnFixedUpdate();
+    private void FixedUpdate()  // Update is called 50 times per second (not once per frame like Update) - for physics
+    { 
+        foreach (IManager manager in _managersTable)
+        {
+            manager.OnFixedUpdate();
+        }
+    }
+    
+    private void Update() // Update is called once per frame - for animation
+    { 
+        foreach (IManager manager in _managersTable)
+        {
+            manager.OnFrameUpdate();
+        }
     }
 
-    void Update()    // Update is called once per frame - for animation
-    {
-        _playerMngr.OnFrameUpdate();
-    }
+
+    // void Start()
+    // {
+    //     _playerMngr.OnStart();
+    //     _hudMngr.OnStart();
+    // }
+
+    // void FixedUpdate()    // Update is called 50 times per second (not once per frame like Update) - for physics
+    // {
+    //     _playerMngr.OnFixedUpdate();
+    // }
+
+    // void Update()    // Update is called once per frame - for animation
+    // {
+    //     _playerMngr.OnFrameUpdate();
+    // }
 
 
     /// <summary>
@@ -50,5 +90,39 @@ public class GameFlow : MonoBehaviour
         _hudMngr = GetComponent<HUDManager>();
 
         _animationMngr = GetComponent<AnimationManager>();
+
+        LogManagerInitStatus();        
     }
+
+
+    #region Helper
+
+    /// <summary>
+    /// method logs once the state of managers init - whether every component was found and if not, which failed
+    /// </summary>
+    private void LogManagerInitStatus()
+    {
+        List<string> missingManagers = new List<string>();
+
+        if (_gameMngr == null) missingManagers.Add(nameof(GameManager));
+        if (_playerMngr == null) missingManagers.Add(nameof(PlayerManager));
+        if (_hudMngr == null) missingManagers.Add(nameof(HUDManager));
+        if (_animationMngr == null) missingManagers.Add(nameof(AnimationManager));
+
+        if (missingManagers.Count > 0)
+        {
+            string msg = $"GameFlow: Missing managers: {string.Join(", ", missingManagers)}";
+
+            GameLogger.LogError(msg, LoggerConfig.LogCategoryFlags.System, this);
+            return;
+        }
+
+        GameLogger.Log(
+            "GameFlow: Managers' component initialization successful.",
+            LoggerConfig.LogCategoryFlags.System,
+            this
+        );
+    }
+
+    #endregion
 }

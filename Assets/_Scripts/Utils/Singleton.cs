@@ -14,7 +14,7 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour // T is generi
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(this);
+            Destroy(this); //Destroy(this) niszczy tylko ten jeden komponent (np. drugi HUDManager)
             return;
         }
         

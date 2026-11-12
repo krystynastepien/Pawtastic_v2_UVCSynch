@@ -8,8 +8,12 @@ public class HUDManager : Singleton<HUDManager>, IManager
 
     #endregion
 
-    #region Properties
 
+    #region Serialized Fields
+        private PlayerHealthController _subscribedHealth;
+    #endregion
+
+    #region Properties
     #endregion
 
     #region IManager Lifecycle Methods (GameFlow)
@@ -22,6 +26,7 @@ public class HUDManager : Singleton<HUDManager>, IManager
     {
         _healthBarController.OnStart();
         _inventoryController.OnStart();
+        _subscribedHealth = PlayerManager.Instance._playerHealth;
         SubscribeToEvents();
     }
 
@@ -35,7 +40,7 @@ public class HUDManager : Singleton<HUDManager>, IManager
 
     public void Update()
     {
-         if (Input.GetKeyDown(KeyCode.I)) {
+        if (Input.GetKeyDown(KeyCode.I)) {
             GameLogger.Log("pressed I", LoggerConfig.LogCategoryFlags.UI, _inventoryController);
             ShowOrHide(UIElement.InventoryUI, !_inventoryController.IsVisible);
         }
@@ -67,9 +72,8 @@ public class HUDManager : Singleton<HUDManager>, IManager
     private void OnDestroy()
     {
         //Unsubscribe to prevent memory leaks
-        if (PlayerManager.Instance._playerHealth != null)
-        {
-            PlayerManager.Instance._playerHealth.OnHealthChangedEvent -= UpdateHUD_OnHealthChange;
+        if (_subscribedHealth != null){
+            _subscribedHealth.OnHealthChangedEvent -= UpdateHUD_OnHealthChange;
         }
     }
 
