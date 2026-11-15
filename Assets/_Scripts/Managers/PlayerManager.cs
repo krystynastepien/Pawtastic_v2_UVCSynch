@@ -7,7 +7,12 @@ public class PlayerManager : Singleton<PlayerManager>, IManager
     private GameObject _player;
     private PlayerActions _playerActions;
     private PlayerMovementStateManager _mngrMovementState;
-    public PlayerHealthController _playerHealth;
+    private PlayerHealthController _healthCtrl;
+    public PlayerHealthController HealthCtrl => _healthCtrl;
+
+
+    private PlayerInventory _playerInventory;
+    public PlayerInventory Inventory => _playerInventory;
 
     
     #endregion
@@ -16,7 +21,6 @@ public class PlayerManager : Singleton<PlayerManager>, IManager
     public void OnAwake()
     {
         base.Initialize(); // Call the singleton logic
-        _isReady = true;
     }
 
     public void OnStart()
@@ -25,7 +29,7 @@ public class PlayerManager : Singleton<PlayerManager>, IManager
         if (!_isReady) return;    
         
         _mngrMovementState.OnStart();
-        _playerHealth.OnStart();
+        _healthCtrl.OnStart();
         _playerActions.OnStart();
     }
 
@@ -54,11 +58,11 @@ public class PlayerManager : Singleton<PlayerManager>, IManager
     /// </summary>
     private bool InitPlayer()
     {
-        _player = GameObject.FindWithTag(Tags.Player); 
+        _player = GameObject.FindWithTag(EditorObjectTag.Player); 
         if(_player == null)
         {
-            string msg = "Object with player tag: '" + Tags.Player + "' not found";
-            GameLogger.LogError(msg, LoggerConfig.LogCategoryFlags.Player, _player);
+            string msg = "Object with player tag: '" + EditorObjectTag.Player + "' not found";
+            GameLogger.LogCritical(msg, LoggerConfig.LogCategoryFlags.Player, _player);
             return false;
         }
         return true;
@@ -82,7 +86,7 @@ public class PlayerManager : Singleton<PlayerManager>, IManager
             return false;
         }
 
-        if (!_player.TryGetComponent(out _playerHealth))
+        if (!_player.TryGetComponent(out _healthCtrl))
         {
             LogMissingComponent(nameof(PlayerHealthController));
             return false;
@@ -101,7 +105,7 @@ public class PlayerManager : Singleton<PlayerManager>, IManager
     private void LogMissingComponent(string componentName)
     {
         string msg = "Player object is missing component: " + componentName;
-        GameLogger.LogError(msg, LoggerConfig.LogCategoryFlags.Player, _player);
+        GameLogger.LogWarning(msg, LoggerConfig.LogCategoryFlags.Player, _player);
     }
 
     #endregion

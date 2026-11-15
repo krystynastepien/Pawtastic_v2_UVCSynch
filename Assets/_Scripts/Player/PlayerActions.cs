@@ -18,6 +18,16 @@ public class PlayerActions : MonoBehaviour
 
     public Vector2 MoveInput { get; private set; }
 
+
+    private PlayerHealthController _healthCtrl;
+    private void Awake()
+    {
+        if (!TryGetComponent(out _healthCtrl))
+        {
+            GameLogger.LogError("PlayerCollisions: missing PlayerHealthController.", LoggerConfig.LogCategoryFlags.Player, this);
+        }
+    }
+
     public void OnStart()
     {
         _rigidBody = GetComponent<Rigidbody2D>();
@@ -54,7 +64,7 @@ public class PlayerActions : MonoBehaviour
     /// </summary>
     /// <returns></returns>
     private void OnMove(){
-        _rigidBody.linearVelocity = MoveInput * PlayerManager.Instance._playerHealth.Speed; 
+        _rigidBody.linearVelocity = MoveInput * _healthCtrl.Speed; 
     }
         
     #endregion

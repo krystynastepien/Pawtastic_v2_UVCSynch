@@ -22,7 +22,7 @@ public class PlayerHealthController : CreatureStats
     /// <summary>
     /// Current number of lives remaining. Character dies when it reaches 0.
     /// </summary>
-    public int CurrentHeartCount { get => _currentHeartCount; private set => _currentHeartCount = value; }
+    public int CurrentHeartCount { get => _currentHeartCount; private set => _currentHeartCount = value; } 
     #endregion
 
     #region Events
@@ -31,7 +31,7 @@ public class PlayerHealthController : CreatureStats
     /// <summary>
     /// 
     /// </summary>
-    public event Action OnHealthChangedEvent;
+    public event Action OnHealthChangedEvent; //  daje info do HUDManager  (powiadomienie: "coś się stało")
 
     #endregion
 
@@ -141,7 +141,7 @@ public class PlayerHealthController : CreatureStats
             seconds = (int)Math.Round(seconds);
             TakeDamage(damageVal);
             GameLogger.Log($"Player is taking continous damage: {damageVal}dmg over {seconds}sec.", LoggerConfig.LogCategoryFlags.Player, this);
-            GameLogger.Log($"Players current Life: {PlayerManager.Instance._playerHealth.CurrentHealth}", LoggerConfig.LogCategoryFlags.Player, this);
+            GameLogger.Log($"Players current Life: {PlayerManager.Instance.HealthCtrl.CurrentHealth}", LoggerConfig.LogCategoryFlags.Player, this);
             yield return new WaitForSeconds(seconds);
         }
     }

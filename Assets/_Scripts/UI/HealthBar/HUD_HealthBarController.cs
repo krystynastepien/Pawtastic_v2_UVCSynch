@@ -2,10 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Pawtastic.Utils;
-using System.Linq;
-using System;
 
-public class HealthBarController : MonoBehaviour
+public class HUD_HealthBarController : MonoBehaviour
 {
     #region Consts
 
@@ -17,8 +15,8 @@ public class HealthBarController : MonoBehaviour
     #endregion Serialized Fields
 
     #region Fields
-    private List<GameObject> _existingHeartsList = new List<GameObject>();
-    private PlayerHealthController _playerCtx;
+    //private List<GameObject> _existingHeartsList = new List<GameObject>();
+    //private PlayerHealthController _playerHealthCtx;
     private List<Image> _heartImages = new List<Image>();
     private Sprite _halfHeartSprite;
     private Sprite _fullHeartSprite;
@@ -30,7 +28,7 @@ public class HealthBarController : MonoBehaviour
     {
         AssignSprites();
         InitializeHealthBarUI(PlayerStats.INIT_MAX_HEART_COUNT);
-        GetPlayerCtx();
+        //GetPlayerCtx();
     }
     #endregion Lifecycle Methods (GameFlow)
 
@@ -38,22 +36,15 @@ public class HealthBarController : MonoBehaviour
     /// <summary>
     /// update HeartPanel
     /// </summary>
-    public void OnUpdateHeartPanel()
+    public void OnUpdateHeartPanel(int currentHealth)
     {
-        if (_playerCtx == null)
-        {
-            GameLogger.LogError("_playerCtx is null", LoggerConfig.LogCategoryFlags.Player | LoggerConfig.LogCategoryFlags.UI, _playerCtx);
-            return;
-        }
-
-        int currentHealth = _playerCtx.CurrentHealth;
         for (int i = 0; i < _heartImages.Count; i++)
-    {
-        // ile punktów życia przypada na serce nr i (serca liczymy od lewej, od 0)
-        int healthInThisHeart = currentHealth - i * PlayerStats.BASE_HEART_LIFE;
+        {
+            // ile punktów życia przypada na serce nr i (serca liczymy od lewej, od 0)
+            int healthInThisHeart = currentHealth - i * PlayerStats.BASE_HEART_LIFE;
 
-        _heartImages[i].sprite = GetHeartSprite(healthInThisHeart);
-    }
+            _heartImages[i].sprite = GetHeartSprite(healthInThisHeart);
+        }
         // if (currentHealth > 0)
         // {
         //     int newHeartCount = GetCurrentHeartCount(currentHealth);
@@ -75,14 +66,6 @@ public class HealthBarController : MonoBehaviour
 
 
     #region private methods
-    private void GetPlayerCtx()
-    {
-        _playerCtx = PlayerManager.Instance._playerHealth;
-        if (_playerCtx == null)
-        {
-            GameLogger.LogError("Failed to get player context", LoggerConfig.LogCategoryFlags.Player | LoggerConfig.LogCategoryFlags.UI, _playerCtx);
-        }
-    }
 
     /// <summary>
     ///  Initialize heart objects in panel with set amount of full hearts
@@ -90,7 +73,6 @@ public class HealthBarController : MonoBehaviour
     /// <param name="heartCount">amount of hearts to create</param>
     private void InitializeHealthBarUI(int heartCount)
     {
-        //GameLogger.Log($"Configuring UI, hearts to render: {heartCount} ", LoggerConfig.LogCategoryFlags.UI);
         for (int i = 0; i < heartCount; i++)
         {
             CreateFullHeartObj(_fullHeartSprite);

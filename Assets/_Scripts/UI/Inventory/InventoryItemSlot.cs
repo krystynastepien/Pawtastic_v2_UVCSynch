@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+// ui view of one slot
 public class InventoryItemSlot : MonoBehaviour
 {
     #region Consts
@@ -11,7 +12,9 @@ public class InventoryItemSlot : MonoBehaviour
     private const string UseLabel = "Use";
     private const string DropLabel = "Drop";
     private const string EatLabel = "Eat";
-    private Color EmptyColor = new Color(249,235,210);
+    private static readonly Color EmptyColor = new Color32(249, 235, 210, 255);
+    // shown when an item has no Icon yet (mockup)
+    private static readonly Color PlaceholderIconColor = new Color32(190, 190, 190, 255);
     #endregion
 
 
@@ -35,30 +38,42 @@ public class InventoryItemSlot : MonoBehaviour
     public event Action<InventoryItemSlot> OnRightMouseBtnClick;
     #endregion
 
-    #region  Fields
+     #region  Fields
     private bool _isEmpty = true;
     private ItemData _itemData;
+    private Vector2 _itemImgStartPos;
     #endregion
-
-
+ 
+ 
     #region Properties
     public Button UseButton { get => _useBtn; private set => _useBtn = value; }
     public Button DropButton { get => _dropBtn; private set => _dropBtn = value; }
+    public bool IsEmpty => _isEmpty;
     #endregion
-
 
 
     #region Initialization
     public void OnInit()
     {
+        _itemImgStartPos = _itemImg.rectTransform.anchoredPosition;
         ClearSlot();
         Deselect();
     }
     #endregion
 
-
     #region Public Methods
 
+    /// <summary>
+    /// Main entry point: render whatever the data says (empty or item + quantity).
+    /// </summary>
+    public void Render(InventorySlotData data)
+    {
+        if (data == null || data.IsEmpty)
+            ClearSlot();
+        else
+            AssignItem(data.Item, data.Quantity);
+    }
+ 
     public void ClearSlot()
     {
         _isEmpty = true;
@@ -67,20 +82,24 @@ public class InventoryItemSlot : MonoBehaviour
         _buttonPanel.SetActive(false);
         _itemImg.sprite = null;
         _itemImg.color = EmptyColor;
-        _itemData = null;
         _itemImg.enabled = false;
+        _borderImg.color = Color.white;
+        _itemData = null;
     }
 
-    public void AssignItem(ItemData item, int quantity)
+     public void AssignItem(ItemData item, int quantity)
     {
         _isEmpty = false;
+        _itemData = item;
+ 
         _itemImg.enabled = true;
         _itemImg.sprite = item.Icon;
-        _itemImg.color = item.Color;
-        SetCounter(item, quantity);
-        _itemData = item;
+        _itemImg.color = item.Icon != null ? Color.white : PlaceholderIconColor;
+        _borderImg.color = ItemRarityColors.Get(item.Rarity);
+ 
+        SetCounter(quantity);
     }
-
+ 
     /// <summary>
     /// set slot as selected
     /// </summary>
@@ -105,45 +124,47 @@ public class InventoryItemSlot : MonoBehaviour
     {
         _itemImg.gameObject.transform.position = input;
     }
-    
-
-
-
+ 
+    public void ResetItemImagePosition()
+    {
+        _itemImg.rectTransform.anchoredPosition = _itemImgStartPos;
+    }
+ 
     #endregion
 
-
-    #region Events and Actions
-
+  #region Events and Actions
+ 
     public void OnBeginDrag()
     {
-        if (_isEmpty) return;     
-        
+        if (_isEmpty) return;
+ 
+        // the dragged image must not block raycasts, otherwise the slot under the cursor never gets OnDrop
+        _itemImg.raycastTarget = false;
         OnItemBeginDrag?.Invoke(this);
     }
-
+ 
     public void OnDrag()
     {        
+        if (_isEmpty) return;
         OnItemDrag?.Invoke(this);
     }
-
+ 
     public void OnEndDrag()
     {
+        // no _isEmpty check: after a drop onto an empty slot this slot may already be empty
+        _itemImg.raycastTarget = true;
+        ResetItemImagePosition();
         OnItemEndDrag?.Invoke(this);
     }
-
+ 
     public void OnDrop()
     {
         OnItemDroppedOn?.Invoke(this);
     }
     
-    /// <summary>
-    /// 
-    /// </summary>
     /// <param name="eventData">data on position of the item and which button has been clicked</param>
     public void OnPointerClick(BaseEventData eventData)
     {
-        //if (_isEmpty) return;     
-        
         PointerEventData data = (PointerEventData)eventData;
         if (data.button == PointerEventData.InputButton.Left)
         {
@@ -154,7 +175,7 @@ public class InventoryItemSlot : MonoBehaviour
             OnRightMouseBtnClick?.Invoke(this);
         }
     }
-
+ 
     #endregion
 
     #region Private Methods
@@ -189,7 +210,15 @@ public class InventoryItemSlot : MonoBehaviour
 
     #region helpers
 
-
+    /// <summary>
+    /// sets text for counter and shows it if quantity is greater than 1
+    /// (quantity never exceeds MaxStackSize - PlayerInventory guarantees it)
+    /// </summary>
+    private void SetCounter(int quantity)
+    {
+        _counterText.text = quantity.ToString();
+        _counter.SetActive(quantity > 1);
+    }
 
     /// <summary>
     /// Assign all health Bar sprites

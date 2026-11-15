@@ -2,6 +2,15 @@ using UnityEngine;
 
 public class PlayerCollisions : MonoBehaviour
 {
+    private PlayerHealthController _healthCtrl;
+    private void Awake()
+    {
+        if (!TryGetComponent(out _healthCtrl))
+        {
+            GameLogger.LogError("PlayerCollisions: missing PlayerHealthController.", LoggerConfig.LogCategoryFlags.Player, this);
+        }
+    }
+
     void OnTriggerEnter2D(Collider2D collision)
     {
       Debug.Log("OnTriggerEnter2D");
@@ -24,26 +33,27 @@ public class PlayerCollisions : MonoBehaviour
     void ProcessCollision(GameObject collider){
         
         //switch for different tags
-        if (collider.CompareTag(Tags.Water))
+        if (collider.CompareTag(EditorObjectTag.Water))
         {
-            PlayerManager.Instance._playerHealth.TakeDamage(damageVal: 2);
+            //PlayerCollisions: TakeDamage() daje info do PlayerHealthController (komenda: "zrób coś")
+            _healthCtrl.TakeDamage(damageVal: 2);
         }
     }
 
     void ProcessCollisionOverTime(GameObject collider){ 
         //switch for different tags
-        if (collider.CompareTag(Tags.Water))
+        if (collider.CompareTag(EditorObjectTag.Water))
         {
-            PlayerManager.Instance._playerHealth.TakeDamageForSeconds(seconds: 1, damageVal: 1);
+            _healthCtrl.TakeDamageForSeconds(seconds: 1, damageVal: 1);
         }
     }
 
     void StopCollisionOverTime(GameObject collider){
         
         //switch for different tags
-        if (collider.CompareTag(Tags.Water))
+        if (collider.CompareTag(EditorObjectTag.Water))
         {
-            PlayerManager.Instance._playerHealth.StopActiveDamageCoroutine();
+            _healthCtrl.StopActiveDamageCoroutine();
         }
     }
     #endregion
