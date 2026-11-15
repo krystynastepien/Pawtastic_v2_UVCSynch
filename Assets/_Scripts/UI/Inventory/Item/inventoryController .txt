@@ -1,0 +1,103 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public class InventoryController : MonoBehaviour
+{
+    private Dictionary<int, InventoryItemSlot> inventoryItems = new Dictionary<int, InventoryItemSlot>();
+    private bool _isVisible;
+
+    #region Consts
+    public const string UI_PATH = "UI/InventoryUI";
+    #endregion
+
+    #region Fields and Properties
+    [SerializeField] private GameObject _inventoryItemsWindow;
+    [SerializeField] private Transform _inventorySlotParent;
+    [SerializeField] private GameObject _itemSlotPrefab;
+    [SerializeField] private InventoryItemDescription _inventoryItemDescription;
+
+    public bool IsVisible
+    {
+        get { return _isVisible; }
+        private set
+        {
+            if (_isVisible != value)
+            {
+                _isVisible = value;
+                if (_isVisible)
+                {
+                    _inventoryItemsWindow.SetActive(true);
+                    InitializeInventoryUI();
+                }
+                else
+                {
+                    _inventoryItemsWindow.SetActive(false);
+                }
+            }
+        }
+    }
+    #endregion
+
+    private void Start()
+    {
+        InitializeInventoryUI();
+    }
+
+    private void OnHide()
+    {
+        IsVisible = false;
+    }
+
+    private void OnShow()
+    {
+        IsVisible = true;
+    }
+
+    public void InitializeInventoryUI()
+    {
+        try
+        {
+            if (_inventoryItemsWindow == null || _inventorySlotParent == null || _itemSlotPrefab == null)
+            {
+                GameLogger.LogError("Inventory UI components are null. Unable to initialize inventory UI.", LoggerConfig.LogCategoryFlags.UI);
+                return;
+            }
+
+            _inventoryItemsWindow.SetActive(false);
+            for (int i = 0; i < 10; i++) // Assuming a 10-slot inventory
+            {
+                var itemSlot = Instantiate(_itemSlotPrefab, _inventorySlotParent);
+                inventoryItems[i] = itemSlot.GetComponent<InventoryItemSlot>();
+            }
+            _inventoryItemsWindow.SetActive(true);
+        }
+        catch (Exception e)
+        {
+            GameLogger.LogError("An error occurred while initializing inventory UI: " + e.Message, LoggerConfig.LogCategoryFlags.UI, e);
+        }
+    }
+
+    public void AssignItem(int itemID, ItemData itemData)
+    {
+        if (inventoryItems.ContainsKey(itemID))
+        {
+            inventoryItems[itemID].AssignItem(itemData);
+        }
+        else
+        {
+            GameLogger.LogError("Cannot assign item: Item slot with ID " + itemID + " does not exist.", LoggerConfig.LogCategoryFlags.UI, itemID);
+        }
+    }
+
+    public void OnInventoryItemClick(int itemID)
+    {
+        if (inventoryItems.ContainsKey(itemID))
+        {
+            _inventoryItemDescription.SetDescription(inventoryItems[itemID].ItemData);
+        }
+        else
+        {
+            GameLogger.LogError("Cannot get item description: Item slot with ID " + itemID + " does not exist.", LoggerConfig.LogCategoryFlags.UI, itemID);
+        }
+    }
+}

@@ -1,0 +1,55 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public class InventoryItemDescription : MonoBehaviour
+{
+    private Text _descriptionText;
+
+    #region Consts
+    public const string DESCRIPTION_PATH = "UI/ItemDescription";
+    #endregion
+
+    #region Fields and Properties
+    [SerializeField] private GameObject _descriptionWindow;
+    [SerializeField] private Text _itemNameText;
+    [SerializeField] private Text _itemDescriptionText;
+
+    public void OnInit()
+    {
+        if (_descriptionWindow == null || _itemNameText == null || _itemDescriptionText == null)
+        {
+            GameLogger.LogError("Inventory item description UI components are null. Unable to initialize item description.", LoggerConfig.LogCategoryFlags.UI);
+            return;
+        }
+
+        _descriptionWindow.SetActive(false);
+    }
+
+    public void ClearDescription()
+    {
+        _itemNameText.text = "";
+        _itemDescriptionText.text = "";
+    }
+
+    public void SetDescription(ItemData itemData)
+    {
+        if (itemData == null)
+        {
+            GameLogger.LogError("Cannot set item description: Item data is null.", LoggerConfig.LogCategoryFlags.UI, itemData);
+            return;
+        }
+
+        _itemNameText.text = itemData.Name;
+        _itemDescriptionText.text = itemData.Description;
+    }
+
+    public void Show()
+    {
+        _descriptionWindow.SetActive(true);
+    }
+
+    public void Hide()
+    {
+        _descriptionWindow.SetActive(false);
+    }
+}

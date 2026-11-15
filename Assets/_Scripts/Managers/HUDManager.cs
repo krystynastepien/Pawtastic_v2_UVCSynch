@@ -4,7 +4,7 @@ public class HUDManager : Singleton<HUDManager>, IManager
 {
     #region Fields
         private bool _isReady;
-        private HealthBarController _healthBarController;
+        private HUD_HealthBarController _healthBarController;
         private InventoryController _inventoryController;
         private PlayerHealthController _subscribedHealth;
     #endregion
@@ -28,10 +28,19 @@ public class HUDManager : Singleton<HUDManager>, IManager
             return;
         }    
 
+        _subscribedHealth = PlayerManager.Instance.HealthCtrl;
+        if (_subscribedHealth == null)
+        {
+            // PlayerManager.OnStart musi być wcześniej w tablicy GameFlow, inaczej Health == null
+            GameLogger.LogCritical("HUDManager: player health not available.", LoggerConfig.LogCategoryFlags.UI | LoggerConfig.LogCategoryFlags.Player, this);
+            return;
+        }
+
         _healthBarController.OnStart();
         _inventoryController.OnStart();
-        _subscribedHealth = PlayerManager.Instance._playerHealth;
+
         SubscribeToEvents();
+        UpdateHUD_OnHealthChange(); // pierwsze odświeżenie, żeby pasek HealthBar pokazywał aktualny stan od załadowania
     }
 
     public void OnFixedUpdate()
@@ -73,10 +82,10 @@ public class HUDManager : Singleton<HUDManager>, IManager
         //     typeof(HealthBarController), 
         //     FindObjectsInactive.Include, 
         //     FindObjectsSortMode.None)[0] as HealthBarController;
-        _healthBarController = Object.FindFirstObjectByType<HealthBarController>(FindObjectsInactive.Include);
+        _healthBarController = Object.FindFirstObjectByType<HUD_HealthBarController>(FindObjectsInactive.Include);
         if(_healthBarController == null)
         {
-            LogMissingObject(nameof(HealthBarController));
+            LogMissingObject(nameof(HUD_HealthBarController));
             return false;
         }
         return true;
@@ -112,8 +121,16 @@ public class HUDManager : Singleton<HUDManager>, IManager
     /// </summary>
     public void UpdateHUD_OnHealthChange()
     {
-        _healthBarController.OnUpdateHeartPanel();
+        //_healthBarController.OnUpdateHeartPanel();
+        _healthBarController.OnUpdateHeartPanel(_subscribedHealth.CurrentHealth);
     }
+
+    public InventoryController GetInventory()
+    {
+        return _inventoryController;
+    }
+
+
     #endregion
 
     #region Private Methods
@@ -123,7 +140,7 @@ public class HUDManager : Singleton<HUDManager>, IManager
     private void SubscribeToEvents()
     {
         // subscribe to OnHealthChangedEvent to update HUD on health change
-        PlayerManager.Instance._playerHealth.OnHealthChangedEvent += UpdateHUD_OnHealthChange;
+        _subscribedHealth.OnHealthChangedEvent += UpdateHUD_OnHealthChange;
     }
     
     private void OnDestroy()
